@@ -66,6 +66,7 @@ const login = async (email, password) => {
 };
 
 const register = async (userData) => {
+  console.log("userData frontend", userData)
   const response = await api.post('/api/users/register', userData);
   return response;
 };

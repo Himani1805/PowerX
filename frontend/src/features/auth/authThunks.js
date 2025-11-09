@@ -4,19 +4,27 @@ import { setCredentials, logout as logoutAction } from './authSlice';
 
 export const login = createAsyncThunk(
   'auth/login',
-  async ({ email, password }, { dispatch, rejectWithValue }) => {
+  async ({ email, password }, { rejectWithValue }) => {
     try {
       const response = await loginApi(email, password);
-      const { user, token } = response;
+      
+      // Check if response is successful and has data
+      if (!response.data) {
+        throw new Error('No data received from server');
+      }
+      
+      const { token, user } = response.data;
+      
+      if (!token || !user) {
+        throw new Error('Invalid response from server');
+      }
       
       // Store token in localStorage
       localStorage.setItem('token', token);
       
-      // Dispatch action to update state
-      dispatch(setCredentials({ user, token }));
-      
       return { user, token };
     } catch (error) {
+      localStorage.removeItem('token');
       return rejectWithValue(error.response?.data?.message || 'Login failed');
     }
   }
@@ -33,7 +41,7 @@ export const register = createAsyncThunk(
         throw new Error('No data received from server');
       }
       
-      const { token, user } = response.data;
+      const { token, user } = response.data.data;
       
       if (!token) {
         throw new Error('No authentication token received');
@@ -42,8 +50,9 @@ export const register = createAsyncThunk(
       // Store token in localStorage
       localStorage.setItem('token', token);
       
-      // Dispatch action to update state
-      dispatch(setCredentials({ user, token }));
+      // Dispatch action to update state() Redirecrt to dashboard
+
+      // dispatch(setCredentials({ user, token }));
       
       return { user, token };
     } catch (error) {
@@ -59,20 +68,23 @@ export const register = createAsyncThunk(
 
 export const fetchCurrentUser = createAsyncThunk(
   'auth/fetchCurrentUser',
-  async (_, { dispatch, rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        return rejectWithValue('No token found');
+        throw new Error('No authentication token found');
       }
       
-      const user = await getCurrentUser();
-      dispatch(setCredentials({ user, token }));
-      return user;
+      const response = await getCurrentUser();
+      
+      if (!response.data) {
+        throw new Error('No user data received');
+      }
+      
+      return response.data;
     } catch (error) {
-      // Clear invalid token
       localStorage.removeItem('token');
-      return rejectWithValue('Session expired. Please log in again.');
+      return rejectWithValue(error.response?.data?.message || 'Session expired. Please log in again.');
     }
   }
 );

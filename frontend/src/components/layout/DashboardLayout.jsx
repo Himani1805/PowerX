@@ -3,6 +3,7 @@ import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../features/auth/authSlice';
 import { fetchNotifications, selectUnreadCount } from '../../features/notifications/notificationSlice';
+import Sidebar from '../Sidebar';
 
 // Icons (using Heroicons v2)
 const MenuIcon = () => (
@@ -50,7 +51,7 @@ const DashboardLayout = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className=" flex border-5 border-blue-600 bg-gray-100">
       {/* Mobile menu */}
       <div className={`${mobileMenuOpen ? 'block' : 'hidden'} lg:hidden`}>
         <div className="fixed inset-0 flex z-40">
@@ -68,7 +69,7 @@ const DashboardLayout = () => {
             </div>
             <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
               <div className="flex-shrink-0 flex items-center px-4">
-                <h1 className="text-xl font-bold text-indigo-600">PowerX CRM</h1>
+                <h1 className="text-xl font-bold text-indigo-600">PowerX </h1>
               </div>
               <nav className="mt-5 px-2 space-y-1">
                 {navigation.map((item) => (
@@ -110,10 +111,10 @@ const DashboardLayout = () => {
       </div>
 
       {/* Static sidebar for desktop */}
-      <div className="hidden lg:flex lg:flex-shrink-0">
+      <div className="border-5 border-red-600 hidden lg:flex lg:flex-shrink-0">
         <div className="flex flex-col w-64 border-r border-gray-200 pt-5 pb-4 bg-white overflow-y-auto">
           <div className="flex items-center flex-shrink-0 px-6">
-            <h1 className="text-xl font-bold text-indigo-600">PowerX CRM</h1>
+            <h1 className="text-xl font-bold text-indigo-600">PowerX </h1>
           </div>
           <div className="mt-5 flex-grow flex flex-col">
             <nav className="flex-1 px-2 space-y-1 bg-white">
@@ -151,10 +152,11 @@ const DashboardLayout = () => {
           </div>
         </div>
       </div>
+      {/* <Sidebar /> */}
 
       {/* Main content */}
-      <div className="lg:pl-64 flex flex-col flex-1">
-        <div className="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:border-none">
+      <div className=" lg:pl-10 flex flex-col flex-1">
+        <div className=" relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:border-none">
           <button
             type="button"
             className="px-4 border-r border-gray-200 text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 lg:hidden"
@@ -165,27 +167,9 @@ const DashboardLayout = () => {
           </button>
           
           {/* Search bar */}
-          <div className="flex-1 px-4 flex justify-between lg:px-6 lg:max-w-6xl lg:mx-auto">
-            <div className="flex-1 flex">
-              <div className="w-full flex md:ml-0">
-                <div className="relative w-full text-gray-400 focus-within:text-gray-600">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <input
-                    id="search"
-                    name="search"
-                    className="block w-full bg-white py-2 pl-10 pr-3 border border-transparent rounded-md leading-5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm"
-                    placeholder="Search"
-                    type="search"
-                  />
-                </div>
-              </div>
-            </div>
-            
-            <div className="ml-4 flex items-center md:ml-6">
+          <div className=" w-full flex justify-end lg:px-6 lg:max-w-6xl ">
+        
+            <div className=" ml-4 flex items-center md:ml-6">
               {/* Notifications */}
               <button
                 type="button"

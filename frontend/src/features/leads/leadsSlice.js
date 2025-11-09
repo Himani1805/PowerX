@@ -109,12 +109,49 @@ export const transferLead = createAsyncThunk(
   }
 );
 
+// Lead Activities
+export const fetchLeadActivities = createAsyncThunk(
+  'leads/fetchLeadActivities',
+  async (leadId, { getState, rejectWithValue }) => {
+    try {
+      const config = getAuthConfig(getState);
+      const response = await axios.get(`${API_URL}/${leadId}/activities`, config);
+      return { leadId, activities: response.data.data };
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || 'Failed to fetch lead activities'
+      );
+    }
+  }
+);
+
+export const createLeadActivity = createAsyncThunk(
+  'leads/createLeadActivity',
+  async ({ leadId, content }, { getState, rejectWithValue }) => {
+    try {
+      const config = getAuthConfig(getState);
+      const response = await axios.post(
+        `${API_URL}/${leadId}/activities`,
+        { content },
+        config
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || 'Failed to create activity'
+      );
+    }
+  }
+);
+
 const initialState = {
   leads: [],
   currentLead: null,
   status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
   error: null,
   message: '',
+  activities: {},
+  activitiesStatus: 'idle',
   pagination: {
     page: 1,
     limit: 10,
@@ -137,6 +174,9 @@ const leadsSlice = createSlice({
     },
     setCurrentLead: (state, action) => {
       state.currentLead = action.payload;
+    },
+    resetActivitiesStatus: (state) => {
+      state.activitiesStatus = 'idle';
     },
   },
   extraReducers: (builder) => {
@@ -241,16 +281,52 @@ const leadsSlice = createSlice({
           state.currentLead = action.payload;
         }
         state.message = 'Lead transferred successfully';
-        state.error = null;
       })
       .addCase(transferLead.rejected, (state, action) => {
         state.status = 'failed';
+        state.error = action.payload;
+      })
+
+      // Fetch Lead Activities
+      .addCase(fetchLeadActivities.pending, (state) => {
+        state.activitiesStatus = 'loading';
+      })
+      .addCase(fetchLeadActivities.fulfilled, (state, action) => {
+        const { leadId, activities } = action.payload;
+        state.activities[leadId] = activities;
+        state.activitiesStatus = 'succeeded';
+      })
+      .addCase(fetchLeadActivities.rejected, (state, action) => {
+        state.activitiesStatus = 'failed';
+        state.error = action.payload;
+      })
+
+      // Create Lead Activity
+      .addCase(createLeadActivity.pending, (state) => {
+        state.activitiesStatus = 'loading';
+      })
+      .addCase(createLeadActivity.fulfilled, (state, action) => {
+        const { leadId } = action.meta.arg;
+        if (!state.activities[leadId]) {
+          state.activities[leadId] = [];
+        }
+        state.activities[leadId].unshift(action.payload);
+        state.activitiesStatus = 'succeeded';
+        state.message = 'Activity added successfully';
+      })
+      .addCase(createLeadActivity.rejected, (state, action) => {
+        state.activitiesStatus = 'failed';
         state.error = action.payload;
       });
   },
 });
 
-export const { resetLeads, clearCurrentLead, setCurrentLead } = leadsSlice.actions;
+export const { 
+  resetLeads, 
+  clearCurrentLead, 
+  setCurrentLead, 
+  resetActivitiesStatus 
+} = leadsSlice.actions;
 
 // Selectors
 export const selectAllLeads = (state) => state.leads.leads;
@@ -261,5 +337,11 @@ export const selectLeadsStatus = (state) => state.leads.status;
 export const selectLeadsError = (state) => state.leads.error;
 export const selectLeadsMessage = (state) => state.leads.message;
 export const selectLeadsPagination = (state) => state.leads.pagination;
+
+export const selectLeadActivities = (state, leadId) => 
+  state.leads.activities[leadId] || [];
+
+export const selectLeadActivitiesStatus = (state) => 
+  state.leads.activitiesStatus;
 
 export default leadsSlice.reducer;

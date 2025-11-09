@@ -25,7 +25,7 @@ async function main() {
   const admin = await prisma.user.create({
     data: {
       name: 'Admin User',
-      email: 'admin@powerx.com',
+      email: 'admin@PowerX .com',
       password: hashedPassword,
       role: Role.ADMIN,
     },
@@ -34,7 +34,7 @@ async function main() {
   const manager = await prisma.user.create({
     data: {
       name: 'Manager One',
-      email: 'manager@powerx.com',
+      email: 'manager@PowerX .com',
       password: hashedPassword,
       role: Role.MANAGER,
     },
@@ -45,7 +45,7 @@ async function main() {
     const salesRep = await prisma.user.create({
       data: {
         name: `Sales Rep ${i}`,
-        email: `sales${i}@powerx.com`,
+        email: `sales${i}@PowerX .com`,
         password: hashedPassword,
         role: Role.SALES,
       },
@@ -112,9 +112,9 @@ async function main() {
   console.log('Database seeded successfully!');
   console.log('\n Test Accounts:');
   console.log('------------------');
-  console.log(`Admin: admin@powerx.com / password123`);
-  console.log(`Manager: manager@powerx.com / password123`);
-  console.log(`Sales Reps: sales1@powerx.com to sales3@powerx.com / password123`);
+  console.log(`Admin: admin@PowerX .com / password123`);
+  console.log(`Manager: manager@PowerX .com / password123`);
+  console.log(`Sales Reps: sales1@PowerX .com to sales3@PowerX .com / password123`);
 }
 
 main()

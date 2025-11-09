@@ -1,6 +1,5 @@
 import { useEffect, Suspense, lazy } from 'react';
 import { Toaster } from 'react-hot-toast';
-import { TooltipProvider } from './components/ui/tooltip';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchCurrentUser, logout } from './features/auth/authThunks';
@@ -88,64 +87,42 @@ const AppContent = () => {
       
       <Routes>
         {/* Public Routes */}
-        <Route
-          path="/login"
-          element={
-            isAuthenticated ? (
-              <Navigate to="/" replace state={{ from: location }} />
-            ) : (
-              <Login />
-            )
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            isAuthenticated ? (
-              <Navigate to="/" replace />
-            ) : (
-              <Register />
-            )
-          }
-        />
+        <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />} />
+        <Route path="/register" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Register />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
 
         {/* Protected Routes */}
-        <Route
-          element={
-            <PrivateRoute isAuthenticated={isAuthenticated}>
-              <DashboardLayout />
-            </PrivateRoute>
-          }
-        >
-          <Route index element={<Dashboard />} />
-          
-          {/* Leads Management */}
-          <Route path="leads">
-            <Route index element={<LeadsList />} />
-            <Route path="new" element={<LeadForm />} />
-            <Route path=":id" element={<LeadDetail />} />
-            <Route path=":id/edit" element={<LeadForm editMode />} />
+        <Route element={<PrivateRoute />}>
+          <Route element={<DashboardLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            
+            {/* Leads Management */}
+            <Route path="/leads">
+              <Route index element={<LeadsList />} />
+              <Route path="new" element={<LeadForm />} />
+              <Route path=":id" element={<LeadDetail />} />
+              <Route path=":id/edit" element={<LeadForm editMode />} />
+            </Route>
+            
+            {/* User Routes */}
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/settings" element={<Settings />} />
+            
+            {/* Analytics */}
+            <Route path="/analytics" element={<Analytics />} />
+            
+            {/* Admin Routes - Protected by role */}
+            {user?.role === 'ADMIN' && (
+              <Route path="/admin/*" element={<AdminPanel />} />
+            )}
+            
+            {/* Redirect root to dashboard */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Route>
-          
-          {/* User Routes */}
-          <Route path="profile" element={<Profile />} />
-          <Route path="settings" element={<Settings />} />
-          
-          {/* Analytics */}
-          <Route path="analytics" element={<Analytics />} />
-          
-          {/* Admin Routes - Protected by role */}
-          {user?.role === 'ADMIN' && (
-            <Route path="admin/*" element={<AdminPanel />} />
-          )}
-          
-          {/* 404 - Not Found */}
-          <Route path="*" element={<NotFound />} />
         </Route>
         
-        {/* Fallback to home if no route matches */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        {/* 404 - Not Found */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
   );
@@ -154,7 +131,7 @@ const AppContent = () => {
 // Main App component with providers
 function App() {
   return (
-    <ThemeProvider defaultTheme="light" storageKey="powerx-theme">
+    <ThemeProvider defaultTheme="light" storageKey="PowerX -theme">
       <TooltipProvider>
         <AppContent />
       </TooltipProvider>

@@ -4,6 +4,7 @@ import { Users, TrendingUp, DollarSign, CheckCircle, Activity, Clock, Check, X }
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import axios from 'axios';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { DashboardLayout } from '@/components/DashboardLayout';
 
 const API_URL = 'http://localhost:3000/api';
@@ -103,139 +104,243 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-muted-foreground">Loading dashboard...</div>
-        </div>
-      </DashboardLayout>
+      <div className="flex items-center justify-center h-64">
+        <div className="text-muted-foreground">Loading dashboard...</div>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-red-500">{error}</div>
-        </div>
-      </DashboardLayout>
+      <div className="flex items-center justify-center h-64">
+        <div className="text-red-500">{error}</div>
+      </div>
     );
   }
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">Overview of your CRM performance</p>
-        </div>
+    <div className="h-screen p-4 md:p-6 space-y-8 max-w-7xl mx-auto">
+  
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {statCards.map((stat) => (
+          <Card key={stat.title} className="hover:shadow-md transition-shadow">
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  {stat.title}
+                </CardTitle>
+                <div className={`p-2 rounded-lg ${stat.color.replace('text', 'bg').replace('-500', '-100')}`}>
+                  <stat.icon className={`h-4 w-4 ${stat.color}`} />
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="pb-4">
+              <div className="text-2xl font-bold">{stat.value}</div>
+              <p className="text-xs text-muted-foreground mt-1">{stat.description}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {statCards.map((stat) => (
-            <Card key={stat.title}>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-                <stat.icon className={`h-5 w-5 ${stat.color}`} />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
-                <p className="text-xs text-muted-foreground">{stat.description}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Activities */}
-        <div className="grid grid-cols-1 gap-6">
-          <Card>
+        <div className="lg:col-span-2 space-y-6">
+          {/* <Card>
             <CardHeader>
-              <CardTitle>Recent Activities</CardTitle>
-              <CardDescription>Latest updates from your team</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Recent Activities</CardTitle>
+                  <CardDescription>Latest updates from your team</CardDescription>
+                </div>
+                <Button variant="ghost" size="sm" className="text-primary">
+                  View All
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
-              {recentActivities.length > 0 ? (
-                <div className="space-y-4">
-                  {recentActivities.map((activity) => {
+              <div className="space-y-4">
+                {recentActivities.length > 0 ? (
+                  recentActivities.map((activity) => {
                     const Icon = activityIcons[activity.type] || activityIcons.default;
                     return (
                       <div
                         key={activity.id}
-                        className="flex items-start gap-3 pb-3 border-b border-border last:border-0"
+                        className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors"
                       >
-                        <div className="flex-shrink-0 pt-0.5">
+                        <div className="flex-shrink-0 mt-0.5">
                           {Icon}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium">{activity.title}</p>
-                          <p className="text-xs text-muted-foreground">
+                        <div className="flex-1 min-w-0 space-y-0.5">
+                          <p className="text-sm font-medium leading-tight">{activity.title}</p>
+                          <p className="text-xs text-muted-foreground leading-tight">
                             {activity.description}
                           </p>
                         </div>
-                        <div className="text-xs text-muted-foreground whitespace-nowrap">
+                        <div className="text-xs text-muted-foreground whitespace-nowrap self-start">
                           {new Date(activity.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </div>
                       </div>
                     );
-                  })}
-                </div>
-              ) : (
-                <div className="text-muted-foreground text-center py-8">
-                  No recent activities
-                </div>
-              )}
+                  })
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    No recent activities to display
+                  </div>
+                )}
+              </div>
             </CardContent>
-          </Card>
+          </Card> */}
+
+          {/* Quick Stats / Charts Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Lead Status Chart */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Lead Status</CardTitle>
+                <CardDescription>Distribution of leads by status</CardDescription>
+              </CardHeader>
+              <CardContent className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { name: 'New', value: 40 },
+                        { name: 'Contacted', value: 30 },
+                        { name: 'Qualified', value: 20 },
+                        { name: 'Closed', value: 10 },
+                      ]}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {[0, 1, 2, 3].map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            {/* Performance Chart */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Performance</CardTitle>
+                <CardDescription>Weekly lead conversion</CardDescription>
+              </CardHeader>
+              <CardContent className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={[
+                      { name: 'Mon', leads: 12, converted: 4 },
+                      { name: 'Tue', leads: 8, converted: 3 },
+                      { name: 'Wed', leads: 15, converted: 6 },
+                      { name: 'Thu', leads: 10, converted: 4 },
+                      { name: 'Fri', leads: 18, converted: 7 },
+                      { name: 'Sat', leads: 5, converted: 2 },
+                      { name: 'Sun', leads: 2, converted: 1 },
+                    ]}
+                    margin={{ top: 20, right: 20, left: 0, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="leads" fill="#3B82F6" name="Leads" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="converted" fill="#10B981" name="Converted" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Link
-            to="/leads/new"
-            className="block p-4 border rounded-lg hover:bg-accent transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-blue-100 text-blue-600">
-                <Users className="h-5 w-5" />
+        {/* Quick Actions Sidebar */}
+        <div className="space-y-6">
+          <Card className="sticky top-6">
+            <CardHeader>
+              <CardTitle>Quick Actions</CardTitle>
+              <CardDescription>Common tasks</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Link
+                to="/leads/new"
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors border"
+              >
+                <div className="p-2 rounded-full bg-blue-100 text-blue-600">
+                  <Users className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-sm">Add New Lead</h3>
+                  <p className="text-xs text-muted-foreground">Create a new lead record</p>
+                </div>
+              </Link>
+              
+              <Link
+                to="/leads"
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors border"
+              >
+                <div className="p-2 rounded-full bg-green-100 text-green-600">
+                  <TrendingUp className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-sm">View All Leads</h3>
+                  <p className="text-xs text-muted-foreground">Manage your leads</p>
+                </div>
+              </Link>
+              
+              <Link
+                to="/analytics"
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors border"
+              >
+                <div className="p-2 rounded-full bg-purple-100 text-purple-600">
+                  <Activity className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-sm">View Analytics</h3>
+                  <p className="text-xs text-muted-foreground">See detailed reports</p>
+                </div>
+              </Link>
+            </CardContent>
+          </Card>
+
+          {/* Upcoming Tasks */}
+          {/* <Card>
+            <CardHeader>
+              <CardTitle>Upcoming Tasks</CardTitle>
+              <CardDescription>Your schedule</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 mt-2 rounded-full bg-blue-500 flex-shrink-0"></div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium">Follow up with John</p>
+                    <p className="text-xs text-muted-foreground">Tomorrow, 10:00 AM</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 mt-2 rounded-full bg-green-500 flex-shrink-0"></div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium">Team Meeting</p>
+                    <p className="text-xs text-muted-foreground">Tomorrow, 2:00 PM</p>
+                  </div>
+                </div>
               </div>
-              <div>
-                <h3 className="font-medium">Add New Lead</h3>
-                <p className="text-sm text-muted-foreground">Create a new lead record</p>
-              </div>
-            </div>
-          </Link>
-          
-          <Link
-            to="/leads"
-            className="block p-4 border rounded-lg hover:bg-accent transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-green-100 text-green-600">
-                <TrendingUp className="h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="font-medium">View All Leads</h3>
-                <p className="text-sm text-muted-foreground">Manage your leads</p>
-              </div>
-            </div>
-          </Link>
-          
-          <Link
-            to="/analytics"
-            className="block p-4 border rounded-lg hover:bg-accent transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-purple-100 text-purple-600">
-                <Activity className="h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="font-medium">View Analytics</h3>
-                <p className="text-sm text-muted-foreground">See detailed reports</p>
-              </div>
-            </div>
-          </Link>
+              <Button variant="outline" size="sm" className="w-full mt-4">
+                View All Tasks
+              </Button>
+            </CardContent>
+          </Card> */}
         </div>
       </div>
-    </DashboardLayout>
+    </div>
   );
 };
 

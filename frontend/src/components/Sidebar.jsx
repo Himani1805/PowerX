@@ -11,9 +11,9 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="w-64 bg-white shadow-lg">
+    <div className="border-5 border-pink-600 w-64 bg-white shadow-lg">
       <div className="p-4 border-b">
-        <h1 className="text-xl font-bold text-indigo-600">PowerX CRM</h1>
+        <h1 className="text-xl font-bold text-indigo-600">PowerX </h1>
       </div>
       <nav className="p-4">
         <ul className="space-y-2">

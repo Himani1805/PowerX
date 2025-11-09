@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import { supabase } from '@/integrations/supabase/client';
 import { 
   LayoutDashboard, 
   Users, 
@@ -14,57 +13,34 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { NavLink } from '@/components/NavLink';
 import { toast } from 'sonner';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout as logoutAction, selectCurrentUser } from '@/features/auth/authSlice';
+import { logout as logoutThunk } from '@/features/auth/authThunks';
 
 export const DashboardLayout = ({ children }) => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState(null);
+  const dispatch = useDispatch();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const user = useSelector(selectCurrentUser);
 
-  // Check authentication and load user data
+  // Check authentication on mount
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate('/auth');
-        return;
-      }
-      setUser(session.user);
-
-      // Load profile
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', session.user.id)
-        .single();
-      
-      if (profileData) {
-        setProfile(profileData);
-      }
-    };
-
-    checkAuth();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) {
-        navigate('/auth');
-      } else {
-        setUser(session.user);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+    if (!user) {
+      navigate('/auth');
+    }
+  }, [user, navigate]);
 
   // Handle logout
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      toast.error('Error logging out');
-    } else {
+    try {
+      await dispatch(logoutThunk()).unwrap();
+      dispatch(logoutAction());
+      localStorage.removeItem('token');
       toast.success('Logged out successfully');
       navigate('/auth');
+    } catch (err) {
+      toast.error('Error logging out');
+      console.error('Logout failed:', err);
     }
   };
 
@@ -74,14 +50,14 @@ export const DashboardLayout = ({ children }) => {
     { name: 'Analytics', to: '/analytics', icon: BarChart3 },
   ];
 
-  const userInitials = profile?.full_name
-    ? profile.full_name.split(' ').map(n => n[0]).join('').toUpperCase()
+  const userInitials = user?.name
+    ? user.name.split(' ').map(n => n[0]).join('').toUpperCase()
     : user?.email?.[0]?.toUpperCase();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className=" border-5 border-pink-600 min-h-screen bg-background flex flex-col">
       {/* Mobile menu button */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-card border-b border-border px-4 py-3 flex items-center justify-between">
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-card border-b border-border px-4 py-3 flex items-center justify-between h-16">
         <div className="flex items-center gap-2">
           <BarChart3 className="h-6 w-6 text-primary" />
           <span className="font-semibold">CRM</span>
@@ -90,18 +66,19 @@ export const DashboardLayout = ({ children }) => {
           variant="ghost"
           size="icon"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="lg:hidden"
         >
           {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </Button>
-      </div>
+      </header>
 
       {/* Sidebar */}
       <aside
         className={`
           fixed top-0 left-0 z-40 h-screen w-64 bg-sidebar text-sidebar-foreground
-          transition-transform duration-300 ease-in-out
+          transition-transform duration-300 ease-in-out pt-16 lg:pt-0
           ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
-          lg:translate-x-0
+          lg:translate-x-0 lg:relative lg:h-screen lg:z-0
         `}
       >
         <div className="flex flex-col h-full">
@@ -134,18 +111,14 @@ export const DashboardLayout = ({ children }) => {
 
           {/* User section */}
           <div className="p-4 border-t border-sidebar-border">
-            <div className="flex items-center gap-3 mb-3">
-              <Avatar>
-                <AvatarFallback className="bg-sidebar-accent text-sidebar-foreground">
-                  {userInitials}
-                </AvatarFallback>
+            <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent">
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>{userInitials}</AvatarFallback>
               </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">
-                  {profile?.full_name || user?.email}
-                </p>
-                <p className="text-xs text-sidebar-foreground/70 truncate">
-                  {user?.email}
+              <div className="truncate">
+                <p className="text-sm font-medium">{user?.name || user?.email}</p>
+                <p className="text-xs text-muted-foreground">
+                  {user?.role || 'User'}
                 </p>
               </div>
             </div>
@@ -171,8 +144,8 @@ export const DashboardLayout = ({ children }) => {
       )}
 
       {/* Main content */}
-      <main className="lg:pl-64 pt-16 lg:pt-0">
-        <div className="p-4 lg:p-8">
+      <main className="flex-1 pt-16 lg:pt-0 lg:pl-64 transition-all duration-300 min-h-screen">
+        <div className="p-4 md:p-6">
           {children}
         </div>
       </main>
