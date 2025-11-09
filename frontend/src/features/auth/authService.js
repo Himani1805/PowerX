@@ -4,9 +4,10 @@ const API_URL = 'http://localhost:3000';
 
 // Register user
 export const register = async (userData) => {
+  console.log("userData", userData)
   try {
     console.log('Sending registration request...', userData);
-    const response = await axios.post(`${API_URL}/api/auth/register`, userDatauserData, {
+    const response = await axios.post(`${API_URL}/api/auth/register`, userData, {
       headers: {
         'Content-Type': 'application/json'
       }

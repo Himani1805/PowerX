@@ -1,9 +1,9 @@
-const { PrismaClient, Role, LeadStatus, ActivityType } = require('@prisma/client');
-const bcrypt = require('bcryptjs');
-const faker = require('faker');
+import { PrismaClient, Role, LeadStatus, ActivityType } from '@prisma/client';
+import bcrypt from 'bcrypt';
+import { faker } from '@faker-js/faker';
+
 const prisma = new PrismaClient();
 
-// Helper function to generate random dates within a range
 function randomDate(start, end) {
   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 }
@@ -25,7 +25,7 @@ async function main() {
   const admin = await prisma.user.create({
     data: {
       name: 'Admin User',
-      email: 'admin@PowerX .com',
+      email: 'admin@powerx.com',
       password: hashedPassword,
       role: Role.ADMIN,
     },
@@ -34,7 +34,7 @@ async function main() {
   const manager = await prisma.user.create({
     data: {
       name: 'Manager One',
-      email: 'manager@PowerX .com',
+      email: 'manager@powerx.com',
       password: hashedPassword,
       role: Role.MANAGER,
     },
@@ -45,7 +45,7 @@ async function main() {
     const salesRep = await prisma.user.create({
       data: {
         name: `Sales Rep ${i}`,
-        email: `sales${i}@PowerX .com`,
+        email: `sales${i}@powerx.com`,
         password: hashedPassword,
         role: Role.SALES,
       },
@@ -62,28 +62,28 @@ async function main() {
   for (let i = 1; i <= 20; i++) {
     const lead = await prisma.lead.create({
       data: {
-        name: faker.name.findName(),
-        company: faker.company.companyName(),
+        name: faker.person.fullName(),
+        company: faker.company.name(),
         email: faker.internet.email(),
-        phone: faker.phone.phoneNumber(),
-        source: faker.random.arrayElement(sources),
-        status: faker.random.arrayElement(statuses),
+        phone: faker.phone.number(),
+        source: faker.helpers.arrayElement(sources),
+        status: faker.helpers.arrayElement(statuses),
         notes: faker.lorem.paragraph(),
         owner: {
-          connect: { id: faker.random.arrayElement(allUsers).id }
+          connect: { id: faker.helpers.arrayElement(allUsers).id }
         },
       },
     });
 
     // Create activities for each lead
-    const activityCount = faker.datatype.number({ min: 1, max: 5 });
+    const activityCount = faker.number.int({ min: 1, max: 5 });
     for (let j = 0; j < activityCount; j++) {
       await prisma.activity.create({
         data: {
-          type: faker.random.arrayElement(Object.values(ActivityType)),
+          type: faker.helpers.arrayElement(Object.values(ActivityType)),
           content: faker.lorem.sentences(2),
           lead: { connect: { id: lead.id } },
-          createdBy: { connect: { id: faker.random.arrayElement(allUsers).id } },
+          createdBy: { connect: { id: faker.helpers.arrayElement(allUsers).id } },
           createdAt: randomDate(new Date(2023, 0, 1), new Date()),
         },
       });
@@ -95,11 +95,11 @@ async function main() {
   const notificationTypes = ['LEAD_ASSIGNED', 'STATUS_UPDATED', 'NEW_MESSAGE', 'SYSTEM_ALERT'];
   
   for (const user of allUsers) {
-    const notificationCount = faker.datatype.number({ min: 1, max: 5 });
+    const notificationCount = faker.number.int({ min: 1, max: 5 });
     for (let i = 0; i < notificationCount; i++) {
       await prisma.notification.create({
         data: {
-          type: faker.random.arrayElement(notificationTypes),
+          type: faker.helpers.arrayElement(notificationTypes),
           message: faker.lorem.sentence(),
           isRead: faker.datatype.boolean(),
           user: { connect: { id: user.id } },
@@ -110,11 +110,11 @@ async function main() {
   }
 
   console.log('Database seeded successfully!');
-  console.log('\n Test Accounts:');
+  console.log('\nTest Accounts:');
   console.log('------------------');
-  console.log(`Admin: admin@PowerX .com / password123`);
-  console.log(`Manager: manager@PowerX .com / password123`);
-  console.log(`Sales Reps: sales1@PowerX .com to sales3@PowerX .com / password123`);
+  console.log(`Admin: admin@powerx.com / password123`);
+  console.log(`Manager: manager@powerx.com / password123`);
+  console.log(`Sales Reps: sales1@powerx.com to sales3@powerx.com / password123`);
 }
 
 main()

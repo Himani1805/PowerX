@@ -60,8 +60,8 @@ const authSlice = createSlice({
       })
       .addCase(register.fulfilled, (state, { payload }) => {
         state.status = 'succeeded';
-        state.user = payload.user;
-        state.token = payload.token;
+        state.error = null;
+        // Don't set user or token here, just mark as succeeded
       })
       .addCase(register.rejected, (state, { payload }) => {
         state.status = 'failed';

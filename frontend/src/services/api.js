@@ -34,8 +34,8 @@ api.interceptors.response.use(
     // Handle unauthorized access
     if (status === 401) {
       // Clear auth data
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      // localStorage.removeItem('token');
+      // localStorage.removeItem('user');
       
       // Redirect to login if not already there
       if (window.location.pathname !== '/login') {
@@ -61,13 +61,13 @@ const getCurrentUser = async () => {
 };
 
 const login = async (email, password) => {
-  const response = await api.post('/api/users/login', { email, password });
+  const response = await api.post('/api/auth/login', { email, password });
   return response.data;
 };
 
 const register = async (userData) => {
   console.log("userData frontend", userData)
-  const response = await api.post('/api/users/register', userData);
+  const response = await api.post('/api/auth/register', userData);
   return response;
 };
 

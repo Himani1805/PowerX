@@ -6,17 +6,17 @@ import { register } from '../features/auth/authThunks';
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
+    name: 'test',
+    email: 'test19@gmail.com',
+    password: '123456',
     role: 'SALES' // Default role
   });
   const [isLoading, setIsLoading] = useState(false);
   
   const roles = [
-    { value: 'SALES', label: 'Sales Executive' },
+    { value: 'SALES', label: 'Sales' },
     { value: 'MANAGER', label: 'Manager' },
-    { value: 'ADMIN', label: 'Administrator' }
+    { value: 'ADMIN', label: 'Admin' }
   ];
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -32,6 +32,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // console.log("formData", formData)
     
     if (!name || !email || !password || !role) {
       toast.error('Please fill in all fields');
@@ -46,7 +47,7 @@ const Register = () => {
     setIsLoading(true);
     try {
       const resultAction = await dispatch(register({ name, email, password, role }));
-      
+      console.log("resultAction", resultAction)
       if (register.fulfilled.match(resultAction)) {
         // If registration is successful but there's no error, navigate to login
         if (!resultAction.error) {

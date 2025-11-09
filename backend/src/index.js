@@ -18,10 +18,22 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
+// Debug middleware to log incoming requests
+app.use((req, res, next) => {
+  console.log('Incoming request:', {
+    method: req.method,
+    url: req.url,
+    headers: req.headers['content-type'],
+    body: req.body
+  });
+  next();
+});
+
 // Routes
-app.use('/api/users', authRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/leads', leadRoutes);
 app.use('/api/notifications', notificationRoutes);
 

@@ -38,8 +38,8 @@ export const register = async (req, res) => {
     // Check if user already exists
     let userExists;
     try {
-      userExists = await prisma.user.findUnique({
-        where: { email }
+      userExists = await prisma.user.findFirst({
+         where: { email: { equals: email, mode: 'insensitive' } }
       });
 
       if (userExists) {
@@ -71,7 +71,7 @@ export const register = async (req, res) => {
       user = await prisma.user.create({
         data: {
           name,
-          email,
+          email: email.toLowerCase(),
           password: hashedPassword,
           role: role || 'SALES' // Default to SALES if role not provided
         }
@@ -130,9 +130,10 @@ export const register = async (req, res) => {
 // @route   POST /api/users/login
 // @access  Public
 export const login = async (req, res) => {
+  console.log("login", req.body)
   try {
     const { email, password } = req.body;
-
+console.log("login1", email, password)
     // Validate input
     if (!email || !password) {
       return res.status(400).json({ 
@@ -142,10 +143,15 @@ export const login = async (req, res) => {
     }
 
     // Check if user exists
-    const user = await prisma.user.findUnique({
-      where: { email }
+    const user = await prisma.user.findFirst({
+      where: {
+    email: {
+      equals: email.trim(),
+      mode: 'insensitive'
+    }
+  }
     });
-
+console.log("user", user)
     if (!user) {
       return res.status(401).json({ 
         success: false,
@@ -196,7 +202,7 @@ export const login = async (req, res) => {
 export const getMe = async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
-      where: { id: req.user.id },
+      where: { id: req.user.id }, 
       select: {
         id: true,
         name: true,

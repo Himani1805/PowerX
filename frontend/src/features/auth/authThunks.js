@@ -1,12 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { login as loginApi, register as registerApi, getCurrentUser } from '../../services/api';
+import { login as loginApi, register as registerApi, getCurrentUser } from '../../services/authService';
 import { setCredentials, logout as logoutAction } from './authSlice';
 
 export const login = createAsyncThunk(
   'auth/login',
   async ({ email, password }, { rejectWithValue }) => {
+    console.log("authThunk", email, password)
     try {
-      const response = await loginApi(email, password);
+      const response = await loginApi({ email, password });
       
       // Check if response is successful and has data
       if (!response.data) {
@@ -21,10 +22,11 @@ export const login = createAsyncThunk(
       
       // Store token in localStorage
       localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
       
       return { user, token };
     } catch (error) {
-      localStorage.removeItem('token');
+      // localStorage.removeItem('token');
       return rejectWithValue(error.response?.data?.message || 'Login failed');
     }
   }
@@ -33,6 +35,7 @@ export const login = createAsyncThunk(
 export const register = createAsyncThunk(
   'auth/register',
   async (userData, { dispatch, rejectWithValue }) => {
+    // console.log("authThunk", userData)
     try {
       const response = await registerApi(userData);
       
@@ -40,15 +43,15 @@ export const register = createAsyncThunk(
       if (!response.data) {
         throw new Error('No data received from server');
       }
-      
-      const { token, user } = response.data.data;
+      console.log("authThunk", response.data)
+      const { token, user } = response.data;
       
       if (!token) {
         throw new Error('No authentication token received');
       }
       
       // Store token in localStorage
-      localStorage.setItem('token', token);
+      // localStorage.setItem('token', token);
       
       // Dispatch action to update state() Redirecrt to dashboard
 
@@ -83,7 +86,7 @@ export const fetchCurrentUser = createAsyncThunk(
       
       return response.data;
     } catch (error) {
-      localStorage.removeItem('token');
+      // localStorage.removeItem('token');
       return rejectWithValue(error.response?.data?.message || 'Session expired. Please log in again.');
     }
   }

@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import { Users, TrendingUp, DollarSign, CheckCircle, Activity, Clock, Check, X } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import axios from 'axios';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { DashboardLayout } from '@/components/DashboardLayout';
 
 const API_URL = 'http://localhost:3000/api';
 
@@ -310,7 +311,7 @@ const Dashboard = () => {
           </Card>
 
           {/* Upcoming Tasks */}
-          {/* <Card>
+          <Card>
             <CardHeader>
               <CardTitle>Upcoming Tasks</CardTitle>
               <CardDescription>Your schedule</CardDescription>
@@ -336,7 +337,7 @@ const Dashboard = () => {
                 View All Tasks
               </Button>
             </CardContent>
-          </Card> */}
+          </Card>
         </div>
       </div>
     </div>

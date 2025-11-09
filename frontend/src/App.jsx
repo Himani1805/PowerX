@@ -37,15 +37,16 @@ const LoadingSpinner = () => (
 const useAuth = () => {
   const { user, status } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  
+  let token = null;
+
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    token = localStorage.getItem('token');
     if (token && !user) {
       dispatch(fetchCurrentUser());
     }
   }, [dispatch, user]);
   
-  return { user, status, isAuthenticated: !!user };
+  return { user, status, isAuthenticated: !!token };
 };
 
 // App wrapper to handle auth state and routing
@@ -89,7 +90,8 @@ const AppContent = () => {
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />} />
-        <Route path="/register" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Register />} />
+        <Route path="/register" element={ <Register />} />
+        {/* isAuthenticated ? <Navigate to="/dashboard" replace /> : */}
         <Route path="/unauthorized" element={<Unauthorized />} />
 
         {/* Protected Routes */}
