@@ -4,6 +4,7 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchCurrentUser, logout } from './features/auth/authThunks';
 import { ThemeProvider } from './components/theme-provider';
+import { TooltipProvider } from './components/ui/Tooltip';
 
 // Lazy load components for better performance
 const DashboardLayout = lazy(() => import('./components/layout/DashboardLayout'));
