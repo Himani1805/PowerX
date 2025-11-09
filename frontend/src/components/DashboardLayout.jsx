@@ -9,8 +9,8 @@ import {
   Menu,
   X 
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/Button';
+import { Avatar, AvatarFallback } from '@/components/ui/Avatar';
 import { NavLink } from '@/components/NavLink';
 import { toast } from 'sonner';
 import { useDispatch, useSelector } from 'react-redux';
