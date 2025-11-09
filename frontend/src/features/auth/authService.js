@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000';
+const API_URL = "https://powerx-v3pk.onrender.com" ||'http://localhost:3000';
 
 // Register user
 export const register = async (userData) => {
