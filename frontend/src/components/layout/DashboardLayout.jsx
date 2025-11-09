@@ -3,7 +3,7 @@ import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../features/auth/authSlice';
 import { fetchNotifications, selectUnreadCount } from '../../features/notifications/notificationSlice';
-import Sidebar from '../Sidebar';
+
 
 // Icons (using Heroicons v2)
 const MenuIcon = () => (
