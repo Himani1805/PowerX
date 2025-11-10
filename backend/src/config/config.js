@@ -13,6 +13,7 @@ const allowedOrigins = [
   'http://localhost:5173', // Vite default
   'http://127.0.0.1:5173', // Alternative localhost
   'http://localhost:3000', // Common React port
+  'https://power-x-pink.vercel.app', // Production frontend
   process.env.FRONTEND_URL // From environment variable
 ].filter(Boolean); // Remove any undefined values
 
