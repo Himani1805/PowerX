@@ -7,13 +7,21 @@ import {
   updateProfile
 } from './authThunks';
 
-// Initial state
-const initialState = {
-  user: null,
-  token: localStorage.getItem('token') || null,
-  status: 'idle',
-  error: null,
+// Helper function to get initial state from localStorage
+const getInitialState = () => {
+  const token = localStorage.getItem('token');
+  const userStr = localStorage.getItem('user');
+  
+  return {
+    user: userStr ? JSON.parse(userStr) : null,
+    token: token,
+    status: token ? 'succeeded' : 'idle',
+    error: null,
+  };
 };
+
+// Initial state
+const initialState = getInitialState();
 
 const authSlice = createSlice({
   name: 'auth',
@@ -25,12 +33,18 @@ const authSlice = createSlice({
       state.token = token;
       state.status = 'succeeded';
       state.error = null;
+      // Update localStorage
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
     },
     logout: (state) => {
       state.user = null;
       state.token = null;
       state.status = 'idle';
       state.error = null;
+      // Clear localStorage on logout
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
     },
     clearError: (state) => {
       state.error = null;
@@ -47,6 +61,9 @@ const authSlice = createSlice({
         state.status = 'succeeded';
         state.user = payload.user;
         state.token = payload.token;
+        // Update localStorage
+        localStorage.setItem('token', payload.token);
+        localStorage.setItem('user', JSON.stringify(payload.user));
       })
       .addCase(login.rejected, (state, { payload }) => {
         state.status = 'failed';

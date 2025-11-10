@@ -2,7 +2,8 @@ import axios from 'axios';
 
 // Create axios instance with base URL pointing to your backend
 const api = axios.create({
-  baseURL: "https://powerx-v3pk.onrender.com" ||'http://localhost:3000' , // Backend runs on port 3000 (removed /api to avoid duplication)
+  // baseURL: "https://powerx-v3pk.onrender.com" ||'http://localhost:3000' , // Backend runs on port 3000 (removed /api to avoid duplication)
+  baseURL: 'http://localhost:3000' ,
   withCredentials: true, // Include cookies in requests if using sessions
   headers: {
     'Content-Type': 'application/json',
@@ -15,12 +16,19 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
+    console.log('Making request to:', config.url);
+    console.log('Current token:', token ? 'Token exists' : 'No token found');
+    
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log('Authorization header set');
+    } else {
+      console.warn('No token found in localStorage');
     }
     return config;
   },
   (error) => {
+    console.error('Request interceptor error:', error);
     return Promise.reject(error);
   }
 );

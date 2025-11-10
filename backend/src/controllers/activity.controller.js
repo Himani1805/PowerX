@@ -7,14 +7,24 @@ const prisma = new PrismaClient();
 // @access  Private
 export const createActivity = async (req, res) => {
   try {
-    const { leadId, type, content } = req.body;
+    // Handle both direct HTTP calls and internal function calls
+    const isHttpCall = res !== undefined && req && req.body && req.user;
+    const activityData = isHttpCall ? req.body : req;
+    const userId = isHttpCall ? req.user.id : (req.userId || (req.user ? req.user.id : null));
+    
+    const { leadId, type, content } = activityData.body || activityData;
     
     // Validate input
     if (!leadId || !type || !content) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide leadId, type, and content'
-      });
+      const error = new Error('Please provide leadId, type, and content');
+      error.status = 400;
+      throw error;
+    }
+    
+    if (!userId) {
+      const error = new Error('User ID is required');
+      error.status = 400;
+      throw error;
     }
 
     // Check if lead exists
@@ -35,7 +45,7 @@ export const createActivity = async (req, res) => {
         type,
         content,
         leadId,
-        createdById: req.user.id
+        createdById: userId
       },
       include: {
         createdBy: {
@@ -48,17 +58,26 @@ export const createActivity = async (req, res) => {
       }
     });
 
-    res.status(201).json({
+    const response = {
       success: true,
       data: activity
-    });
+    };
+
+    if (isHttpCall) {
+      return res.status(201).json(response);
+    }
+    return response;
   } catch (error) {
     console.error('Error creating activity:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
+    
+    if (res) {
+      return res.status(error.status || 500).json({
+        success: false,
+        message: error.message || 'Server error',
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
+    }
+    throw error; // Re-throw for internal calls
   }
 };
 

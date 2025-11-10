@@ -22,8 +22,11 @@ model User {
   updatedAt     DateTime   @updatedAt
   
   // Relations
-  leads        Lead[]      @relation("LeadOwner")
-  activities   Activity[]
+  ownedLeads    Lead[]         @relation("LeadOwner")
+  createdLeads  Lead[]         @relation("CreatedLeads")
+  updatedLeads  Lead[]         @relation("UpdatedLeads")
+  leadHistory   LeadHistory[]
+  activities    Activity[]
   notifications Notification[]
   
   @@map("users")
@@ -39,17 +42,43 @@ model Lead {
   source      String   @default("WEBSITE")
   status      LeadStatus @default(NEW)
   notes       String?
+  priority    Priority   @default(MEDIUM)
+
+  // Ownership
+  ownerId     String
+  owner       User       @relation("LeadOwner", fields: [ownerId], references: [id])
+  createdById  String
+  createdBy   User       @relation("CreatedLeads", fields: [createdById], references: [id])
+  updatedById  String
+  updatedBy   User       @relation("UpdatedLeads", fields: [updatedById], references: [id])
+  assignedAt  DateTime   @default(now())
   
   // Relations
-  ownerId     String
-  owner       User     @relation("LeadOwner", fields: [ownerId], references: [id])
   activities  Activity[]
+  history     LeadHistory[]
   
   // Timestamps
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
   @@map("leads")
+}
+
+// Lead History model for tracking changes to leads
+model LeadHistory {
+  id          String   @id @default(uuid())
+  leadId      String
+  lead        Lead     @relation(fields: [leadId], references: [id])
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  action      String   // CREATE, UPDATE, STATUS_CHANGE, OWNER_CHANGE
+  field       String?  // Which field was changed
+  oldValue    String?  // Old value (as string)
+  newValue    String?  // New value (as string)
+  createdAt   DateTime @default(now())
+  
+  @@index([leadId])
+  @@map("lead_histories")
 }
 
 // Activity model for tracking interactions with leads
@@ -100,6 +129,13 @@ enum LeadStatus {
   QUALIFIED
   LOST
   CUSTOMER
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
 }
 
 enum ActivityType {

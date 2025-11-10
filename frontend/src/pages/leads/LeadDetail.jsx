@@ -6,12 +6,14 @@ import {
   fetchLeadById, 
   deleteLead,
   selectLeadById,
-  selectLeadsStatus,
-  fetchLeadActivities,
-  createLeadActivity,
-  selectLeadActivities,
-  selectLeadActivitiesStatus
-} from '../../features/leads/leadsSlice';
+  selectLeadsStatus
+} from './leadsSlice';
+import { 
+  createActivity as createLeadActivity,
+  fetchActivities as fetchLeadActivities,
+  selectAllActivities as selectLeadActivities,
+  selectActivityStatus as selectLeadActivitiesStatus
+} from '../../features/activities/activitySlice';
 import { toast } from 'react-toastify';
 
 const LeadDetail = () => {

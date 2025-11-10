@@ -1,5 +1,6 @@
 import express from 'express';
 import { protect, authorize } from '../middleware/auth.middleware.js';
+import { getLeadActivities, createActivity } from '../controllers/activity.controller.js';
 import {
   createLead,
   getLeads,
@@ -18,18 +19,24 @@ router.use(protect);
 // Routes for managing leads
 router.route('/')
   .post(authorize('ADMIN', 'MANAGER', 'SALES'), createLead)
-  .get(authorize('ADMIN', 'MANAGER'), getLeads);
+  .get(authorize('ADMIN', 'MANAGER', 'SALES'), getLeads);
 
 // Routes for individual lead operations
 router.route('/my-leads')
-  .get(authorize('SALES'), getMyLeads);
+  .get(authorize('ADMIN', 'MANAGER', 'SALES'), getMyLeads);
 
 router.route('/:id')
   .get(getLead)
-  .put(updateLead)
+  // .put(updateLead)
+  .patch(updateLead) // Add support for PATCH method
   .delete(authorize('ADMIN', 'MANAGER'), deleteLead);
 
 // Transfer lead to another user (MANAGER and ADMIN only)
 router.put('/:id/transfer', authorize('ADMIN', 'MANAGER'), transferLead);
+
+// Activities for a specific lead
+router.route('/:leadId/activities')
+  .get(authorize('ADMIN', 'MANAGER', 'SALES'), getLeadActivities)
+  .post(authorize('ADMIN', 'MANAGER', 'SALES'), createActivity);
 
 export default router;

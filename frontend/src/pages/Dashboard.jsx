@@ -201,8 +201,9 @@ const Dashboard = () => {
                 <CardTitle>Lead Status</CardTitle>
                 <CardDescription>Distribution of leads by status</CardDescription>
               </CardHeader>
-              <CardContent className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
+              <CardContent className="h-64 w-full">
+                <div className="h-full w-full min-h-[200px]">
+                  <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={[
@@ -222,9 +223,9 @@ const Dashboard = () => {
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
               </CardContent>
             </Card>
 
@@ -234,8 +235,9 @@ const Dashboard = () => {
                 <CardTitle>Performance</CardTitle>
                 <CardDescription>Weekly lead conversion</CardDescription>
               </CardHeader>
-              <CardContent className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
+              <CardContent className="h-64 w-full">
+                <div className="h-full w-full min-h-[200px]">
+                  <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={[
                       { name: 'Mon', leads: 12, converted: 4 },
@@ -256,6 +258,7 @@ const Dashboard = () => {
                     <Bar dataKey="converted" fill="#10B981" name="Converted" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -311,7 +314,7 @@ const Dashboard = () => {
           </Card>
 
           {/* Upcoming Tasks */}
-          <Card>
+          {/* <Card>
             <CardHeader>
               <CardTitle>Upcoming Tasks</CardTitle>
               <CardDescription>Your schedule</CardDescription>
@@ -337,7 +340,7 @@ const Dashboard = () => {
                 View All Tasks
               </Button>
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
       </div>
     </div>

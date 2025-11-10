@@ -5,9 +5,9 @@ import {
   createLead, 
   updateLead, 
   fetchLeadById, 
-  selectLeadById,
-  selectLeadsStatus
-} from '../../features/leads/leadsSlice';
+  // selectLeadById,
+  // selectLeadsStatus
+} from './leadsSlice';
 import { toast } from 'react-toastify';
 
 const LeadForm = () => {
@@ -15,8 +15,8 @@ const LeadForm = () => {
   const isEditMode = Boolean(id);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const status = useSelector(selectLeadsStatus);
-  const lead = useSelector((state) => selectLeadById(state, id));
+  const status = useSelector((state) => state.leads.status);
+  const lead = useSelector((state) => state.leads.currentLead || state.leads.leads);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -40,15 +40,20 @@ const LeadForm = () => {
   // Update form data when lead is loaded or when switching between add/edit
   useEffect(() => {
     if (isEditMode && lead) {
-      setFormData({
-        name: lead.name || '',
-        email: lead.email || '',
-        phone: lead.phone || '',
-        company: lead.company || '',
-        status: lead.status || 'NEW',
-        source: lead.source || 'WEBSITE',
-        notes: lead.notes || '',
-      });
+      // Handle both cases where lead might be an array (from leads) or an object (from currentLead)
+      const leadData = Array.isArray(lead) ? lead[0] : lead;
+      
+      if (leadData) {
+        setFormData({
+          name: leadData.name || '',
+          email: leadData.email || '',
+          phone: leadData.phone || '',
+          company: leadData.company || '',
+          status: leadData.status || 'NEW',
+          source: leadData.source || 'WEBSITE',
+          notes: leadData.notes || '',
+        });
+      }
     } else if (!isEditMode) {
       // Reset form for new lead
       setFormData({

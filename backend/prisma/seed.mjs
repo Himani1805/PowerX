@@ -13,10 +13,15 @@ async function main() {
   
   // Clear existing data
   console.log('Clearing existing data...');
-  await prisma.notification.deleteMany();
-  await prisma.activity.deleteMany();
-  await prisma.lead.deleteMany();
-  await prisma.user.deleteMany();
+  try {
+    // Delete data in the correct order to respect foreign key constraints
+    await prisma.notification.deleteMany({}).catch(() => {});
+    await prisma.activity.deleteMany({}).catch(() => {});
+    await prisma.lead.deleteMany({}).catch(() => {});
+    await prisma.user.deleteMany({}).catch(() => {});
+  } catch (error) {
+    console.log('Error clearing data, continuing with seed:', error.message);
+  }
 
   const hashedPassword = await bcrypt.hash('password123', 10);
   
@@ -60,6 +65,7 @@ async function main() {
   const allUsers = [admin, manager, ...salesReps];
 
   for (let i = 1; i <= 20; i++) {
+    const owner = faker.helpers.arrayElement(allUsers);
     const lead = await prisma.lead.create({
       data: {
         name: faker.person.fullName(),
@@ -70,7 +76,13 @@ async function main() {
         status: faker.helpers.arrayElement(statuses),
         notes: faker.lorem.paragraph(),
         owner: {
-          connect: { id: faker.helpers.arrayElement(allUsers).id }
+          connect: { id: owner.id }
+        },
+        createdBy: {
+          connect: { id: owner.id }
+        },
+        updatedBy: {
+          connect: { id: owner.id }
         },
       },
     });

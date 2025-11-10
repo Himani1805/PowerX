@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import { corsOptions } from './config/config.js';
 import authRoutes from './routes/auth.route.js';
 import leadRoutes from './routes/lead.route.js';
+import leadHistoryRoutes from './routes/leadHistory.routes.js';
 import notificationRoutes from './routes/notification.route.js';
 import { PrismaClient } from '@prisma/client';
 
@@ -13,7 +14,7 @@ dotenv.config();
 
 // Initialize express
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors(corsOptions));
@@ -35,6 +36,7 @@ app.use((req, res, next) => {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/leads', leadRoutes);
+app.use('/api/leadHistory', leadHistoryRoutes);
 app.use('/api/notifications', notificationRoutes);
 
 // Health check endpoint

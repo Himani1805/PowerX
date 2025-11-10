@@ -8,7 +8,7 @@ import {
   selectLeadsStatus, 
   selectLeadsError,
   selectLeadsPagination
-} from '../../features/leads/leadsSlice';
+} from './leadsSlice';
 import { format } from 'date-fns';
 import { toast } from 'react-toastify';
 

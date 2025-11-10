@@ -3,7 +3,7 @@ import { Toaster } from 'react-hot-toast';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchCurrentUser, logout } from './features/auth/authThunks';
-import { ThemeProvider } from './components/theme-provider';
+import { ThemeProvider } from './components/ThemeProvider';
 import { TooltipProvider } from './components/ui/Tooltip';
 
 // Lazy load components for better performance
@@ -19,6 +19,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const LeadsList = lazy(() => import('./pages/leads/LeadsList'));
 const LeadForm = lazy(() => import('./pages/leads/LeadForm'));
 const LeadDetail = lazy(() => import('./pages/leads/LeadDetail'));
+const Activity = lazy(() => import('./pages/Activity'));
 const Analytics = lazy(() => import('./pages/Analytics'));
 const Profile = lazy(() => import('./pages/Profile'));
 const Settings = lazy(() => import('./pages/Settings'));
@@ -37,16 +38,15 @@ const LoadingSpinner = () => (
 const useAuth = () => {
   const { user, status } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  let token = null;
-
+  
   useEffect(() => {
-    token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
     if (token && !user) {
       dispatch(fetchCurrentUser());
     }
   }, [dispatch, user]);
   
-  return { user, status, isAuthenticated: !!token };
+  return { user, status, isAuthenticated: !!user };
 };
 
 // App wrapper to handle auth state and routing
@@ -89,43 +89,65 @@ const AppContent = () => {
       
       <Routes>
         {/* Public Routes */}
-        <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />} />
-        <Route path="/register" element={ <Register />} />
-        {/* isAuthenticated ? <Navigate to="/dashboard" replace /> : */}
+        <Route
+          path="/login"
+          element={
+            isAuthenticated ? (
+              <Navigate to="/" replace state={{ from: location }} />
+            ) : (
+              <Login />
+            )
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            isAuthenticated ? (
+              <Navigate to="/" replace />
+            ) : (
+              <Register />
+            )
+          }
+        />
         <Route path="/unauthorized" element={<Unauthorized />} />
 
         {/* Protected Routes */}
-        <Route element={<PrivateRoute />}>
-          <Route element={<DashboardLayout />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            
-            {/* Leads Management */}
-            <Route path="/leads">
-              <Route index element={<LeadsList />} />
-              <Route path="new" element={<LeadForm />} />
-              <Route path=":id" element={<LeadDetail />} />
-              <Route path=":id/edit" element={<LeadForm editMode />} />
-            </Route>
-            
-            {/* User Routes */}
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/settings" element={<Settings />} />
-            
-            {/* Analytics */}
-            <Route path="/analytics" element={<Analytics />} />
-            
-            {/* Admin Routes - Protected by role */}
-            {user?.role === 'ADMIN' && (
-              <Route path="/admin/*" element={<AdminPanel />} />
-            )}
-            
-            {/* Redirect root to dashboard */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route
+          element={
+            <PrivateRoute isAuthenticated={isAuthenticated}>
+              <DashboardLayout />
+            </PrivateRoute>
+          }
+        >
+          <Route index element={<Dashboard />} />
+
+          {/* Lead Routes */}
+          <Route path="leads">
+            <Route index element={<LeadsList />} />
+            <Route path="new" element={<LeadForm />} />
+            <Route path=":id" element={<LeadDetail />} />
+            <Route path=":id/edit" element={<LeadForm editMode />} />
+            <Route path=":leadId/activities" element={<Activity />} />
           </Route>
+          
+          {/* User Routes */}
+          <Route path="profile" element={<Profile />} />
+          <Route path="settings" element={<Settings />} />
+          
+          {/* Analytics */}
+          <Route path="analytics" element={<Analytics />} />
+          
+          {/* Admin Routes - Protected by role */}
+          {user?.role === 'ADMIN' && (
+            <Route path="admin/*" element={<AdminPanel />} />
+          )}
+          
+          {/* 404 - Not Found */}
+          <Route path="*" element={<NotFound />} />
         </Route>
         
-        {/* 404 - Not Found */}
-        <Route path="*" element={<NotFound />} />
+        {/* Fallback to home if no route matches */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Suspense>
   );

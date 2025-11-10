@@ -1,78 +1,175 @@
-import userModel from "../models/user.model.js";
+import { PrismaClient } from '@prisma/client';
+import createError from '../utils/createError.js';
 
-async function readAllUser(request, response, next){
+const prisma = new PrismaClient();
+
+/**
+ * @desc    Get all users
+ * @route   GET /api/users
+ * @access  Private/Admin
+ */
+async function readAllUser(request, response, next) {
     try {
-        //  Step 1: Get all users from DB -> gets all user documents
-        const data = await userModel.find().select("-password")
-        //  Step 2: Send success response
-        return response.status(200).json({data})
-    // Error Handling    
-    } catch (error) {
-        console.log("error from readAllUsers ", error)
-        return response.status(400).json({message: "ReadAllusers is failed."})   
-    }
-}
-
-async function readUser(request, response, next){
-    try {
-        // Step 1: Extract the ID from URL -> This pulls the id from the URL path.
-        const {id} = request.params
-        // console.log(id)
-        // Step 2: Find the user by ID in MongoDB
-        const data = await userModel.findOne({_id:id}).select("-password")
-        console.log(data)
-        // Step 3: Send success response
-        return response.status(200).json(data)
-
-     // Error Handling   
-    } catch (error) {
-        return next(error)
-        // console.log("error from readUser ", error)
-        // return response.status(400).json({msg: "ReadUser is failed.", error})  
-    }
-}
-
-
-async function updateUser(request, response, next){
-    try {
-        // Step 1: Get ID from URL
-        const {id} = request.params
-        // const {username, email, password} = request.body
-        //  Step 2: Update the user in the database
-        const data = await userModel.findByIdAndUpdate(id, request.body, {new:true}).select("-password")
-        console.log(data)
-        // Step 3: Return success response
-        return response.status(200).json(data)
-    //  Error Handling
-    } catch (error) {
-        console.log("error from updateUser ", error)
-        return response.status(400).json({msg: "User update is failed."})
+        // Get all users from the database using Prisma
+        const users = await prisma.user.findMany({
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                isActive: true,
+                createdAt: true,
+                updatedAt: true
+            }
+        });
         
-    }
-}
-
-async function deleteUser(request, response, next){
-    try {
-        // Step 1: Get ID from URL
-        const {id} = request.params
-        //  Step 2: Delete user from database
-        const data = await userModel.findByIdAndDelete(id)
-         console.log(data)
-        //  Step 3: Check if user didn’t exist
-         if(!data){
-            return response.status(404).json({message: "User not found"})
-         }
-
-        // Step 4: Send success response
-        return response.status(200).json({msg: "User deleted successfully."}, data)
-    // Error Handling    
+        // Send success response
+        response.status(200).json({
+            success: true,
+            count: users.length,
+            data: users
+        });
     } catch (error) {
-        console.log("error from deleteUser ", error)
-        return response.status(400).json({msg: "user deleted failed."})
-        
+        console.error('Error in readAllUser:', error);
+        next(createError(500, 'Failed to fetch users'));
     }
 }
 
+/**
+ * @desc    Get single user by ID
+ * @route   GET /api/users/:id
+ * @access  Private/Admin
+ */
+async function readUser(request, response, next) {
+    try {
+        const { id } = request.params;
 
-export { readAllUser, readUser, updateUser, deleteUser }
+        // Find user by ID using Prisma
+        const user = await prisma.user.findUnique({
+            where: { id },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                isActive: true,
+                createdAt: true,
+                updatedAt: true
+            }
+        });
 
+        if (!user) {
+            return next(createError(404, 'User not found'));
+        }
+
+        response.status(200).json({
+            success: true,
+            data: user
+        });
+    } catch (error) {
+        console.error('Error in readUser:', error);
+        next(createError(500, 'Failed to fetch user'));
+    }
+}
+
+/**
+ * @desc    Update user
+ * @route   PUT /api/users/:id
+ * @access  Private/Admin
+ */
+async function updateUser(request, response, next) {
+    try {
+        const { id } = request.params;
+        const { name, email, role, isActive } = request.body;
+
+        // Check if user exists
+        const userExists = await prisma.user.findUnique({
+            where: { id }
+        });
+
+        if (!userExists) {
+            return next(createError(404, 'User not found'));
+        }
+
+        // Update user using Prisma
+        const updatedUser = await prisma.user.update({
+            where: { id },
+            data: {
+                name: name || userExists.name,
+                email: email || userExists.email,
+                role: role || userExists.role,
+                isActive: isActive !== undefined ? isActive : userExists.isActive
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                isActive: true,
+                createdAt: true,
+                updatedAt: true
+            }
+        });
+
+        response.status(200).json({
+            success: true,
+            data: updatedUser,
+            message: 'User updated successfully'
+        });
+    } catch (error) {
+        console.error('Error in updateUser:', error);
+        
+        // Handle unique constraint violation for email
+        if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
+            return next(createError(400, 'Email already in use'));
+        }
+        
+        next(createError(500, 'Failed to update user'));
+    }
+}
+
+/**
+ * @desc    Delete user
+ * @route   DELETE /api/users/:id
+ * @access  Private/Admin
+ */
+async function deleteUser(request, response, next) {
+    try {
+        const { id } = request.params;
+
+        // Check if user exists
+        const userExists = await prisma.user.findUnique({
+            where: { id }
+        });
+
+        if (!userExists) {
+            return next(createError(404, 'User not found'));
+        }
+
+        // Prevent deleting own account
+        if (id === request.user.id) {
+            return next(createError(400, 'You cannot delete your own account'));
+        }
+
+        // Delete user using Prisma
+        await prisma.user.delete({
+            where: { id }
+        });
+
+        response.status(200).json({
+            success: true,
+            message: 'User deleted successfully'
+        });
+    } catch (error) {
+        console.error('Error in deleteUser:', error);
+        
+        // Handle foreign key constraint violation
+        if (error.code === 'P2003') {
+            return next(createError(400, 'Cannot delete user with associated records'));
+        }
+        
+        next(createError(500, 'Failed to delete user'));
+    }
+}
+
+export { readAllUser, readUser, updateUser, deleteUser };

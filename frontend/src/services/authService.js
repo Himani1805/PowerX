@@ -11,14 +11,22 @@ export const register = async (userData) => {
 };
 
 export const login = async (credentials) => {
-  console.log("credentials", credentials)
-  const response = await api.post('/api/auth/login', credentials);
-  console.log("response00", response.data)
-  if (response.data.token) {
-    localStorage.setItem('token', response.data.token);
-    localStorage.setItem('user', JSON.stringify(response.data));
+  console.log("Login credentials:", credentials);
+  try {
+    const response = await api.post('/api/auth/login', credentials);
+    console.log("Login response:", response.data);
+    
+    if (response.data.data && response.data.data.token) {
+      localStorage.setItem('token', response.data.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.data.user));
+      // Set the default Authorization header for future requests
+      api.defaults.headers.common['Authorization'] = `Bearer ${response.data.data.token}`;
+    }
+    return response.data;
+  } catch (error) {
+    console.error('Login error:', error);
+    throw error;
   }
-  return response.data;
 };
 
 export const logout = () => {

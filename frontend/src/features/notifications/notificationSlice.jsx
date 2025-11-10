@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { io } from 'socket.io-client';
 
 const API_URL = '/api/notifications';
 
@@ -12,6 +13,19 @@ const getAuthConfig = (getState) => {
       Authorization: `Bearer ${auth.user.token}`,
     },
   };
+};
+
+// Initialize socket connection
+let socket;
+const getSocket = (token) => {
+  if (!socket && token) {
+    socket = io(process.env.REACT_APP_API_URL || 'http://localhost:5000', {
+      path: '/socket.io/',
+      auth: { token },
+      transports: ['websocket'],
+    });
+  }
+  return socket;
 };
 
 // Async thunks for API calls
@@ -88,7 +102,8 @@ const initialState = {
   unreadCount: 0,
   status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
   error: null,
-  message: '',
+  message: null,
+  socket: null,
 };
 
 const notificationSlice = createSlice({
@@ -101,8 +116,7 @@ const notificationSlice = createSlice({
       state.message = '';
     },
     addNotification: (state, action) => {
-      state.notifications.unshift(action.payload);
-      state.unreadCount += 1;
+      state.items.unshift(action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -113,24 +127,29 @@ const notificationSlice = createSlice({
       })
       .addCase(fetchNotifications.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.notifications = action.payload?.notifications || [];
-        state.unreadCount = action.payload?.unread || 0;
-        state.error = null;
+        // Merge with existing notifications, preserving unread status for existing ones
+        const existingNotifications = new Map(state?.items?.map(n => [n._id, n]));
+        const merged = action.payload?.map(notification => ({
+          ...notification,
+          read: existingNotifications.get(notification._id)?.read ?? notification.read
+        }));
+        state.items = merged;
       })
       .addCase(fetchNotifications.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
       })
 
-      // Mark Notification as Read
-      .addCase(markNotificationAsRead.pending, (state) => {
-        state.status = 'loading';
+      // Mark as Read
+      .addCase(markNotificationAsRead.pending, (state, action) => {
+        // Optimistic update
+        const notification = state.items.find(n => n._id === action.meta.arg);
+        if (notification) {
+          notification.read = true;
+        }
       })
       .addCase(markNotificationAsRead.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        const index = state.notifications.findIndex(
-          (n) => n.id === action.payload.id
-        );
+        // Handle success - update any additional data if needed
         if (index !== -1) {
           state.notifications[index] = action.payload;
         }
@@ -185,7 +204,47 @@ const notificationSlice = createSlice({
   },
 });
 
-export const { resetNotifications, addNotification } = notificationSlice.actions;
+// Middleware for WebSocket events
+export const setupSocketListeners = (dispatch, getState) => {
+  const { auth } = getState();
+  if (!auth.user?.token) return;
+
+  const socket = getSocket(auth.user.token);
+  
+  socket.on('connect', () => {
+    console.log('Connected to WebSocket server');
+  });
+
+  socket.on('notification_created', (notification) => {
+    console.log('New notification received:', notification);
+    dispatch(addNotification(notification));
+    
+    // Play sound for new notifications
+    if (Notification.permission === 'granted') {
+      new Notification(notification.title, {
+        body: notification.message,
+        icon: '/logo192.png',
+      });
+    }
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Disconnected from WebSocket server');
+  });
+
+  return () => {
+    socket.off('notification_created');
+    socket.off('connect');
+    socket.off('disconnect');
+  };
+};
+
+export const { 
+  resetNotifications, 
+  addNotification, 
+  initializeSocket,
+  markAsReadLocally 
+} = notificationSlice.actions;
 
 // Selectors
 export const selectAllNotifications = (state) => state.notifications.notifications;

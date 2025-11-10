@@ -6,8 +6,8 @@ import { login } from '../features/auth/authThunks';
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: 'test25@gmail.com',
+    password: '123456',
   });
 
   const { email, password } = formData;
