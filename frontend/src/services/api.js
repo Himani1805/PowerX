@@ -2,8 +2,9 @@ import axios from 'axios';
 
 // Create axios instance with base URL pointing to your backend
 const api = axios.create({
-  baseURL: "https://powerx-v3pk.onrender.com" ||'http://localhost:3000' , // Backend runs on port 3000 (removed /api to avoid duplication)
-  // baseURL: 'http://localhost:3000' ,
+  baseURL: import.meta.env.PROD 
+    ? 'https://powerx-v3pk.onrender.com' 
+    : 'http://localhost:3000',
   withCredentials: true, // Include cookies in requests if using sessions
   headers: {
     'Content-Type': 'application/json',
