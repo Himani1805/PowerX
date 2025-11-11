@@ -22,12 +22,14 @@ model User {
   updatedAt     DateTime   @updatedAt
   
   // Relations
-  ownedLeads    Lead[]         @relation("LeadOwner")
-  createdLeads  Lead[]         @relation("CreatedLeads")
-  updatedLeads  Lead[]         @relation("UpdatedLeads")
-  leadHistory   LeadHistory[]
-  activities    Activity[]
-  notifications Notification[]
+  ownedLeads          Lead[]           @relation("LeadOwner")
+  createdLeads        Lead[]           @relation("CreatedLeads")
+  updatedLeads        Lead[]           @relation("UpdatedLeads")
+  leadHistory         LeadHistory[]
+  activities          Activity[]
+  notifications       Notification[]
+  leadAnalytics       LeadAnalytics[]
+  performanceMetrics  UserPerformance[]
   
   @@map("users")
 }
@@ -43,6 +45,8 @@ model Lead {
   status      LeadStatus @default(NEW)
   notes       String?
   priority    Priority   @default(MEDIUM)
+  assignedTo  String?
+ 
 
   // Ownership
   ownerId     String
@@ -143,4 +147,61 @@ enum ActivityType {
   CALL
   MEETING
   EMAIL
+}
+
+// Analytics models
+model LeadAnalytics {
+  id          String   @id @default(uuid())
+  date        DateTime @default(now())
+  totalLeads  Int
+  newLeads    Int
+  contacted   Int
+  qualified  Int
+  converted  Int
+  lost       Int
+  
+  // Relations
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  
+  @@index([date])
+  @@map("lead_analytics")
+}
+
+model UserPerformance {
+  id              String   @id @default(uuid())
+  date            DateTime @default(now())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  
+  // Metrics
+  leadsAssigned   Int      @default(0)
+  leadsConverted  Int      @default(0)
+  activities      Int      @default(0)
+  responseTime    Int?     // in minutes
+  
+  // Conversion rates
+  conversionRate  Float?   // percentage
+  
+  @@index([date, userId])
+  @@map("user_performance")
+}
+
+model FunnelStage {
+  id          String   @id @default(uuid())
+  name        String
+  order       Int
+  count       Int      @default(0)
+  date        DateTime @default(now())
+  
+  @@unique([name, date])
+  @@map("funnel_stages")
+}
+
+enum AnalyticsTimeframe {
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  YEARLY
 }

@@ -11,7 +11,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="border-5 border-pink-600 w-64 bg-white shadow-lg">
+    <div className="w-64 bg-white shadow-lg">
       <div className="p-4 border-b">
         <h1 className="text-xl font-bold text-indigo-600">PowerX </h1>
       </div>

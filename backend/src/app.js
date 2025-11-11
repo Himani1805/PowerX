@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import { corsOptions } from './config/config.js';
+import analyticsRoutes from './routes/analytics.routes.js';
 
 const app = express();
 
@@ -9,6 +10,9 @@ const app = express();
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(morgan('dev'));
+
+// API Routes
+app.use('/api/analytics', analyticsRoutes);
 
 // Routes will be added here
 

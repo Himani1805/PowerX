@@ -81,6 +81,9 @@ export const protect = async (req, res, next) => {
   }
 };
 
+// Alias protect as authenticate for backward compatibility
+export const authenticate = protect;
+
 // Grant access to specific roles
 export const authorize = (roles) => {
   console.log("roles12", roles)

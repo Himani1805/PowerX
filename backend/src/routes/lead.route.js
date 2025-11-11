@@ -35,7 +35,11 @@ router.route('/:id')
 router.put('/:id/transfer', authorize('ADMIN', 'MANAGER'), transferLead);
 
 // Activities for a specific lead
-router.route('/:leadId/activities')
+// router.route('/:leadId/activities')
+//   .get(authorize('ADMIN', 'MANAGER', 'SALES'), getLeadActivities)
+//   .post(authorize('ADMIN', 'MANAGER', 'SALES'), createActivity);
+
+router.route('/activities')
   .get(authorize('ADMIN', 'MANAGER', 'SALES'), getLeadActivities)
   .post(authorize('ADMIN', 'MANAGER', 'SALES'), createActivity);
 
