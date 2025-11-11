@@ -40,7 +40,7 @@ app.use('/api/leadHistory', leadHistoryRoutes);
 app.use('/api/notifications', notificationRoutes);
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
+app.get('/', (req, res) => {
   res.json({ status: 'ok', message: 'API is running' });
 });
 
