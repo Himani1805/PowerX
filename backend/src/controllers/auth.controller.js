@@ -7,7 +7,6 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d';
 
 // @desc    Register a new user
-// @route   POST /api/users/register
 // @access  Public
 export const register = async (req, res) => {
   try {
@@ -127,7 +126,6 @@ export const register = async (req, res) => {
 };
 
 // @desc    Login user
-// @route   POST /api/users/login
 // @access  Public
 export const login = async (req, res) => {
   console.log("login", req.body)
@@ -197,7 +195,6 @@ console.log("user", user)
 };
 
 // @desc    Get current user
-// @route   GET /api/users/me
 // @access  Private
 export const getMe = async (req, res) => {
   try {
