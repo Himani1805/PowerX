@@ -19,6 +19,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const LeadsList = lazy(() => import('./pages/leads/LeadsList'));
 const LeadForm = lazy(() => import('./pages/leads/LeadForm'));
 const LeadDetail = lazy(() => import('./pages/leads/LeadDetail'));
+const LeadSingleView = lazy(() => import('./pages/LeadSingleView'));
 const Activity = lazy(() => import('./pages/Activity'));
 const Analytics = lazy(() => import('./pages/Analytics'));
 const Profile = lazy(() => import('./pages/Profile'));
@@ -93,7 +94,7 @@ const AppContent = () => {
           path="/"
           element={
             isAuthenticated ? (
-              <Navigate to="/dashboard" replace state={{ from: location }} />
+              <Navigate to="/" replace state={{ from: location }} />
             ) : (
               <Navigate to="/login" replace state={{ from: location }} />
             )
@@ -137,9 +138,12 @@ const AppContent = () => {
             <Route path="new" element={<LeadForm />} />
             <Route path=":id" element={<LeadDetail />} />
             <Route path=":id/edit" element={<LeadForm editMode />} />
-            <Route path=":leadId/activities" element={<Activity />} />
+            {/* <Route path=":leadId/activities" element={<LeadSingleView />} /> */}
           </Route>
+
+          {/* Activity Routes */}
           
+           <Route path="activities" element={<Activity />} />
           {/* User Routes */}
           <Route path="profile" element={<Profile />} />
           <Route path="settings" element={<Settings />} />

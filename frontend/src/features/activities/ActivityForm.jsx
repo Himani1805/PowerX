@@ -19,12 +19,14 @@ import {
   PopoverTrigger,
 } from '@/components/ui/Popover';
 import { cn } from '@/lib/utils';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectAllLeads, fetchLeads } from '../../pages/leads/leadsSlice';
 
 const ACTIVITY_TYPES = [
-  { value: 'call', label: 'Phone Call' },
-  { value: 'email', label: 'Email' },
-  { value: 'meeting', label: 'Meeting' },
-  { value: 'note', label: 'Note' },
+  { value: 'CALL', label: 'Phone Call' },
+  { value: 'EMAIL', label: 'Email' },
+  { value: 'MEETING', label: 'Meeting' },
+  { value: 'NOTE', label: 'Note' },
 ];
 
 export const ActivityForm = ({ 
@@ -36,17 +38,25 @@ export const ActivityForm = ({
   const [date, setDate] = useState(initialData?.dueDate ? new Date(initialData.dueDate) : new Date());
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
     defaultValues: initialData || {
-      type: 'call',
+      type: 'CALL',
+      leadId: '',
       title: '',
       description: '',
       dueDate: new Date(),
     }
   });
-
+  const dispatch = useDispatch();
+  const leads = useSelector(selectAllLeads);
   const activityType = watch('type');
 
   useEffect(() => {
+    // Fetch leads when component mounts
+    dispatch(fetchLeads({}));
+  }, [dispatch]);
+
+  useEffect(() => {
     if (initialData) {
+      setValue('leadId', initialData.leadId);
       setValue('type', initialData.type);
       setValue('title', initialData.title);
       setValue('description', initialData.description);
@@ -55,17 +65,70 @@ export const ActivityForm = ({
       }
     }
   }, [initialData, setValue]);
-
-  const handleFormSubmit = (data) => {
-    onSubmit({
-      ...data,
-      dueDate: date.toISOString(),
-    });
+// console.log("Activity form 62", leads)
+  // const handleFormSubmit = (data) => {
+  //   console.log("Activity form 65", data)
+  //   onSubmit({
+  //     ...data,
+  //     leadId: data.leadId,
+  //     dueDate: date.toISOString(),
+  //   });
+  // };
+  const handleFormSubmit = async (data) => {
+    try {
+      console.log("Form data:", data);
+      // Ensure type is in the correct case (uppercase)
+      const activityData = {
+        type: data.type.toUpperCase(),
+        content: data.description || '',
+        title: data.title || '',
+        dueDate: date.toISOString()
+      };
+      
+      // Only include leadId if it exists
+      if (data.leadId) {
+        activityData.leadId = data.leadId;
+      }
+      
+      console.log("Submitting activity:", activityData);
+      await onSubmit(activityData);
+      
+      // Reset form after successful submission if this is a new activity
+      if (!initialData) {
+        setValue('type', 'CALL');
+        setValue('title', '');
+        setValue('description', '');
+        setValue('leadId', '');
+        setDate(new Date());
+      }
+    } catch (error) {
+      console.error('Error submitting activity:', error);
+      // You might want to show an error message to the user here
+    }
   };
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
       <div>
+        <label className="block text-sm font-medium mb-1">Lead</label>
+        <Select 
+          value={watch('leadId')} 
+          onValueChange={(value) => setValue('leadId', value)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select lead" />
+          </SelectTrigger>
+          <SelectContent>
+            {leads.map((lead) => (
+              <SelectItem key={lead.id} value={lead.id}>
+                {lead.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+       <div>
         <label className="block text-sm font-medium mb-1">Activity Type</label>
         <Select 
           value={watch('type')} 

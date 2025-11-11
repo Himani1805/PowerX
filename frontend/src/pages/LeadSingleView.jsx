@@ -2,33 +2,29 @@ import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { ActivityList } from '../features/activities/ActivityList';
-import ActivityDetail from '../features/activities/ActivityDetail';
 
-const Activity = () => {
+const LeadSingleView = () => {
   const { leadId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   // useEffect(() => {
   //   if (!leadId) {
-  //     navigate('/activities'); // Redirect to leads list if no leadId
+  //     // navigate('/hina'); // Redirect to leads list if no leadId
   //   }
   // }, [leadId, navigate]);
 
-  // if (!leadId) {
-  //   return null; // Or a loading spinner
-  // }
+  if (!leadId) {
+    return null; // Or a loading spinner
+  }
 
   return (
     <div className="container mx-auto py-6 px-4">
       <div className="max-w-4xl mx-auto">
-        <ActivityList leadId={leadId} isOwner={true} />
-      </div>
-        <div className="max-w-4xl mx-auto">
-        <ActivityDetail />
+        {/* <ActivityList leadId={leadId} isOwner={true} /> */}
       </div>
     </div>
   );
 };
 
-export default Activity;
+export default LeadSingleView;

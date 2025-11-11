@@ -7,16 +7,16 @@ import {
   deleteLead,
   selectLeadById,
   selectLeadsStatus
-} from './leadsSlice';
+} from '../../pages/leads/leadsSlice';
 import { 
   createActivity as createLeadActivity,
   fetchActivities as fetchLeadActivities,
   selectAllActivities as selectLeadActivities,
   selectActivityStatus as selectLeadActivitiesStatus
-} from '../../features/activities/activitySlice';
+} from './activitySlice';
 import { toast } from 'react-toastify';
 
-const LeadDetail = () => {
+const ActivityDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -158,7 +158,7 @@ const LeadDetail = () => {
             </span>
           </div>
         </div>
-        {/* <div className="mt-4 flex space-x-3 md:mt-0">
+        <div className="mt-4 flex space-x-3 md:mt-0">
           <button
             type="button"
             onClick={() => setIsEditing(!isEditing)}
@@ -179,7 +179,7 @@ const LeadDetail = () => {
           >
             Delete
           </button>
-        </div> */}
+        </div>
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -385,7 +385,7 @@ const LeadDetail = () => {
           )}
 
           {/* Activities */}
-          {/* <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+          <div className="bg-white shadow overflow-hidden sm:rounded-lg">
             <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
               <h3 className="text-lg leading-6 font-medium text-gray-900">Activities</h3>
             </div>
@@ -459,13 +459,13 @@ const LeadDetail = () => {
                 )}
               </div>
             </div>
-          </div> */}
+          </div>
         </div>
 
         {/* Right sidebar */}
         <div className="lg:col-span-1 space-y-6">
           {/* Assigned to */}
-          {/* <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+          <div className="bg-white shadow overflow-hidden sm:rounded-lg">
             <div className="px-4 py-5 sm:px-6">
               <h3 className="text-lg leading-6 font-medium text-gray-900">Assigned To</h3>
             </div>
@@ -486,10 +486,10 @@ const LeadDetail = () => {
                 </div>
               </div>
             </div>
-          </div> */}
+          </div>
 
           {/* Timeline */}
-          {/* <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+          <div className="bg-white shadow overflow-hidden sm:rounded-lg">
             <div className="px-4 py-5 sm:px-6">
               <h3 className="text-lg leading-6 font-medium text-gray-900">Timeline</h3>
             </div>
@@ -552,11 +552,11 @@ const LeadDetail = () => {
                 </ul>
               </div>
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default LeadDetail;
+export default ActivityDetail;

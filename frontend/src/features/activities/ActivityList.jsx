@@ -24,19 +24,43 @@ export const ActivityList = ({ leadId, isOwner = false }) => {
   const status = useSelector(selectActivityStatus);
   const error = useSelector(selectActivityError);
   const [showForm, setShowForm] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    if (leadId) {
-      dispatch(fetchActivities(leadId));
-    }
+    const fetchData = async () => {
+      if (leadId) {
+        console.log('Fetching activities for leadId:', leadId);
+        try {
+          const resultAction = await dispatch(fetchActivities(leadId));
+          if (fetchActivities.fulfilled.match(resultAction)) {
+            console.log('Fetched activities:', resultAction.payload);
+          } else if (fetchActivities.rejected.match(resultAction)) {
+            console.error('Failed to fetch activities:', resultAction.error);
+          }
+        } catch (error) {
+          console.error('Error in fetch activities:', error);
+        }
+      }
+    };
+    
+    fetchData();
   }, [dispatch, leadId]);
+
+  console.log('Current activities in component:', activities);
+  console.log('Current status:', status);
+  console.log('Error:', error);
 
   const handleCreateActivity = async (activityData) => {
     try {
+      setIsSubmitting(true);
       await dispatch(createActivity({ leadId, activityData })).unwrap();
       setShowForm(false);
+      setIsSubmitting(false);
     } catch (error) {
       console.error('Failed to create activity:', error);
+      throw error; // Re-throw to let the form handle the error
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -109,6 +133,7 @@ export const ActivityList = ({ leadId, isOwner = false }) => {
             initialData={null}
             onSubmit={handleCreateActivity}
             onCancel={() => setShowForm(false)}
+            isLoading={isSubmitting}
           />
         </div>
       )}

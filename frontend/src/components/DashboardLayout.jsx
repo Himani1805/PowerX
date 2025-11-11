@@ -45,7 +45,7 @@ export const DashboardLayout = ({ children }) => {
   };
 
   const navigation = [
-    { name: 'Dashboard', to: '/dashboard', icon: LayoutDashboard },
+    { name: 'Dashboard', to: '/', icon: LayoutDashboard },
     { name: 'Leads', to: '/leads', icon: Users },
     { name: 'Analytics', to: '/analytics', icon: BarChart3 },
   ];

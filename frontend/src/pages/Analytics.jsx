@@ -3,6 +3,7 @@ import { DashboardLayout } from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Legend } from 'recharts';
 import axios from 'axios';
+import api from '../services/api';
 
 const API_URL = 'http://localhost:3000/api';
 
@@ -18,7 +19,7 @@ const Analytics = () => {
   const loadAnalytics = async () => {
     try {
       // Replace with your actual API endpoint
-      const response = await axios.get(`${API_URL}/analytics/leads-over-time`);
+      const response = await api.get(`/analytics/leads-over-time`);
       setLeadsOverTime(response.data);
     } catch (err) {
       console.error('Error loading analytics:', err);
@@ -47,27 +48,22 @@ const Analytics = () => {
 
   if (loading) {
     return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center h-64">
+      <div className="flex items-center justify-center h-64">
           <div className="text-muted-foreground">Loading analytics...</div>
         </div>
-      </DashboardLayout>
     );
   }
 
   if (error) {
     return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center h-64">
+     <div className="flex items-center justify-center h-64">
           <div className="text-red-500">{error}</div>
         </div>
-      </DashboardLayout>
     );
   }
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
+     <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold">Analytics</h1>
           <p className="text-muted-foreground">Performance metrics and insights</p>
@@ -155,7 +151,6 @@ const Analytics = () => {
           </div>
         </div>
       </div>
-    </DashboardLayout>
   );
 };
 

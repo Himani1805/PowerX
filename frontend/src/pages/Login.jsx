@@ -34,7 +34,7 @@ const Login = () => {
     try {
       await dispatch(login({ email, password })).unwrap();
       toast.success('Login successful!');
-      navigate('/dashboard');
+      navigate('/');
     } catch (error) {
       toast.error(error || 'Login failed. Please try again.');
     }

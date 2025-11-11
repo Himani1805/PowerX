@@ -6,9 +6,12 @@ export const fetchActivities = createAsyncThunk(
   'activities/fetchActivities',
   async (leadId, { rejectWithValue }) => {
     try {
-      const response = await api.get(`/api/leads/${leadId}/activities`);
-      return response.data.data;
+      console.log('Fetching activities for lead:', leadId);
+      const response = await api.get(`/api/leads/${leadId}/history`);
+      console.log('Activities response:', response.data);
+      return response.data.data || [];
     } catch (error) {
+      console.error('Error fetching activities:', error);
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch activities');
     }
   }
