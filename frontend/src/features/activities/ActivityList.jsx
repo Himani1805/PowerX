@@ -16,7 +16,7 @@ import {
   clearCurrentActivity
 } from './activitySlice';
 import { Loader2 } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert, AlertDescription } from '@/components/ui/Alert';
 
 export const ActivityList = ({ leadId, isOwner = false }) => {
   const dispatch = useDispatch();
