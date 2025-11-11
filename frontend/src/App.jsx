@@ -89,6 +89,16 @@ const AppContent = () => {
       
       <Routes>
         {/* Public Routes */}
+          <Route
+          path="/"
+          element={
+            isAuthenticated ? (
+              <Navigate to="/dashboard" replace state={{ from: location }} />
+            ) : (
+              <Navigate to="/login" replace state={{ from: location }} />
+            )
+          }
+        />
         <Route
           path="/login"
           element={
