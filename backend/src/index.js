@@ -41,8 +41,11 @@ app.use('/api/notifications', notificationRoutes);
 
 // Health check endpoint
 app.get('/', (req, res) => {
-  res.json({ status: 'ok', message: 'API is running' });
+  // res.json({ status: 'ok', message: 'API is running' });
+   return res.status(200).json({ message: 'API is running' });
 });
+
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {
