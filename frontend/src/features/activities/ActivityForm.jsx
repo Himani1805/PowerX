@@ -11,13 +11,13 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Calendar } from '@/components/ui/calendar';
+} from '@/components/ui/Select';
+import { Calendar } from '@/components/ui/Calendar';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
+} from '@/components/ui/Popover';
 import { cn } from '@/lib/utils';
 
 const ACTIVITY_TYPES = [

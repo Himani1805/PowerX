@@ -10,7 +10,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/components/ui/Select';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 

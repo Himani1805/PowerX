@@ -10,13 +10,11 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/components/ui/Select';
 import { Badge } from '@/components/ui/Badge';
 import { Separator } from '@/components/ui/Separator';
 import { 
-  Building2, 
-  User, 
-  Mail, 
+  Mail,
   Phone, 
   DollarSign, 
   Calendar,
