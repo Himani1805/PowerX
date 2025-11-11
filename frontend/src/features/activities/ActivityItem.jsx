@@ -1,8 +1,8 @@
 // frontend/src/features/activities/ActivityItem.jsx
 import { format } from 'date-fns';
 import { Pencil, Trash2, Phone, Mail, Calendar, MessageSquare, CheckCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
 
 const getActivityIcon = (type) => {
   switch (type) {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ActivityItem } from './ActivityItem';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { Plus } from 'lucide-react';
 import { ActivityForm } from './ActivityForm';
 import { useDispatch, useSelector } from 'react-redux';
