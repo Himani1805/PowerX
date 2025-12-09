@@ -15,6 +15,15 @@ import {
 import { useGetLeadStatusStatsQuery, useGetLeadOwnerStatsQuery } from '../features/analytics/analyticsApiSlice';
 import { BarChart2, PieChart as PieChartIcon, RefreshCw, Loader2, TrendingUp } from 'lucide-react';
 
+// Status colors mapping
+const STATUS_COLORS = {
+  NEW: '#3b82f6',       // Blue
+  CONTACTED: '#f59e0b', // Amber
+  QUALIFIED: '#8b5cf6', // Violet
+  LOST: '#ef4444',      // Red
+  WON: '#10b981',       // Emerald
+};
+
 // Color palette for charts - expanded for more variety
 const COLORS = [
   '#6366f1', // Indigo
@@ -125,15 +134,17 @@ const AnalyticsPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {/* Chart 1: Leads by Status (Bar Chart) */}
-        <div className="bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-lg">
+        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-300">
           {/* Chart Header */}
-          <div className="flex items-center justify-between mb-6 pb-4 border-b-2 border-slate-100">
-            <h2 className="text-lg font-bold text-slate-800 flex items-center">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mr-3 shadow-md">
-                <BarChart2 size={20} className="text-white" />
-              </div>
-              Leads by Status
-            </h2>
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-xl font-bold text-slate-800 flex items-center">
+                <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center mr-3 text-indigo-600">
+                  <BarChart2 size={24} />
+                </div>
+                Leads by Status
+              </h2>
+            </div>
           </div>
 
           {/* Bar Chart */}
@@ -141,43 +152,58 @@ const AnalyticsPage = () => {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={statsByStatus}
-                margin={{ top: 20, right: 10, left: -20, bottom: 5 }}
+                margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
               >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                 <XAxis
                   dataKey="status"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: '#64748b', fontSize: 12, fontWeight: 600 }}
+                  tick={{ fill: '#64748b', fontSize: 13, fontWeight: 600 }}
+                  dy={10}
                 />
                 <YAxis
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: '#64748b', fontSize: 12 }}
+                  tick={{ fill: '#64748b', fontSize: 13 }}
                   allowDecimals={false}
+                  layout="horizontal"
                 />
                 <Tooltip
-                  cursor={{ fill: '#f1f5f9' }}
-                  contentStyle={{
-                    borderRadius: '12px',
-                    border: 'none',
-                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
-                    padding: '12px'
+                  cursor={{ fill: '#f8fafc', radius: 4 }}
+                  content={({ active, payload, label }) => {
+                    if (active && payload && payload.length) {
+                      const data = payload[0].payload;
+                      const color = STATUS_COLORS[data.status] || '#6366f1';
+                      return (
+                        <div className="bg-white p-4 border border-slate-100 shadow-xl rounded-2xl min-w-[150px]">
+                          <div className="flex items-center mb-2">
+                            <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: color }}></div>
+                            <span className="text-slate-500 font-medium text-sm">{label}</span>
+                          </div>
+                          <div className="flex items-end gap-2">
+                            <span className="text-2xl font-bold text-slate-800">{payload[0].value}</span>
+                            <span className="text-slate-400 font-medium text-sm mb-1">Leads</span>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
                   }}
                 />
                 <Bar
                   dataKey="count"
-                  name="Leads"
-                  fill="url(#colorGradient)"
-                  radius={[8, 8, 0, 0]}
-                  barSize={50}
-                />
-                <defs>
-                  <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#6366f1" stopOpacity={1} />
-                    <stop offset="100%" stopColor="#8b5cf6" stopOpacity={1} />
-                  </linearGradient>
-                </defs>
+                  radius={[12, 12, 0, 0]}
+                  animationDuration={1500}
+                >
+                  {statsByStatus.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={STATUS_COLORS[entry.status] || '#6366f1'}
+                      strokeWidth={0}
+                    />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>

@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {
-      // जब भी हम '/api' पर रिक्वेस्ट करेंगे, यह उसे http://localhost:8000 पर भेज देगा
+      // Whenever we request '/api', it will forward it to http://localhost:8000
       '/api': {
         target: 'http://localhost:8000',
         changeOrigin: true,
