@@ -570,40 +570,9 @@ vercel --prod
 
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-### How to Contribute
-
-1. **Fork the repository**
-2. **Create a feature branch**
-   ```bash
-   git checkout -b feature/AmazingFeature
-   ```
-3. **Commit your changes**
-   ```bash
-   git commit -m 'Add some AmazingFeature'
-   ```
-4. **Push to the branch**
-   ```bash
-   git push origin feature/AmazingFeature
-   ```
-5. **Open a Pull Request**
-
-### Development Guidelines
-
-- Follow the existing code style
-- Write meaningful commit messages
-- Add tests for new features
-- Update documentation as needed
-- Ensure all tests pass before submitting PR
-
----
-
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
 ---
 
@@ -612,33 +581,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Himani Sharma**
 
 - GitHub: [@Himani1805](https://github.com/Himani1805)
-- Project Link: [https://github.com/Himani1805/PowerX](https://github.com/Himani1805/PowerX)
-
----
-
-## 🙏 Acknowledgments
-
-- Built with modern web technologies
-- Inspired by enterprise CRM solutions
-- Thanks to the open-source community
-
----
-
-## 📞 Support
-
-If you have any questions or need help, please:
-
-1. Check the [API Documentation](#-api-documentation)
-2. Review the [Installation Guide](#-installation)
-3. Open an issue on GitHub
-4. Contact via email: hinusharma18@gmail.com
+- Email: hinusharma18@gmail.com
 
 ---
 
 <div align="center">
 
-**Made with ❤️ by Himani Sharma**
-
-⭐ Star this repo if you find it helpful!
+**⭐ Star this repo if you find it helpful!**
 
 </div>
