@@ -1,8 +1,8 @@
-# 🚀 PowerX - Next-Generation Customer Relationship Management System
+# PowerX - Next-Generation Customer Relationship Management System
 
 <div align="center">
 
-![PowerX CRM](https://img.shields.io/badge/PowerX-CRM-blue?style=for-the-badge)
+![PowerX](https://img.shields.io/badge/PowerX-CRM-blue?style=for-the-badge)
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
 ![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
@@ -16,9 +16,24 @@
 
 ---
 
+**Live Demo:**
+```
+URL: https://powerx-crm.vercel.app
+```
+
+---
+
+**Default Admin Credentials:**
+```
+Email: admin@crm.com
+Password: admin123
+```
+
+---
+
 ## 📖 Overview
 
-PowerX CRM is a full-stack Customer Relationship Management system designed to streamline lead management, automate workflows, and provide real-time insights for sales teams. Built with modern technologies and best practices, it offers enterprise-grade features with a focus on user experience and scalability.
+PowerX is a full-stack Customer Relationship Management system designed to streamline lead management, automate workflows, and provide real-time insights for sales teams. Built with modern technologies and best practices, it offers enterprise-grade features with a focus on user experience and scalability.
 
 ### 🎯 Key Highlights
 
@@ -136,8 +151,8 @@ Before you begin, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/powerx-crm.git
-cd powerx-crm
+git clone https://github.com/Himani1805/PowerX.git
+cd PowerX
 ```
 
 ### 2. Backend Setup
@@ -229,14 +244,6 @@ Frontend will run on `http://localhost:5173`
 Open your browser and navigate to:
 - **Frontend:** `http://localhost:5173`
 - **Backend API:** `http://localhost:8000/api/v1`
-
-**Default Admin Credentials:**
-```
-Email: admin@crm.com
-Password: admin123
-```
-
----
 
 ## 📁 Project Structure
 
@@ -511,82 +518,3 @@ vercel --prod
 
 ---
 
-## 📸 Screenshots
-
-### Dashboard
-![Dashboard](docs/screenshots/dashboard.png)
-
-### Lead Management
-![Leads](docs/screenshots/leads.png)
-
-### Activity Timeline
-![Activities](docs/screenshots/activities.png)
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-### Development Guidelines
-
-- Follow the existing code style
-- Write meaningful commit messages
-- Add tests for new features
-- Update documentation as needed
-- Ensure all tests pass before submitting PR
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 👥 Authors
-
-- **Your Name** - *Initial work* - [YourGitHub](https://github.com/yourusername)
-
----
-
-## 🙏 Acknowledgments
-
-- Masters' Union for the project requirements
-- The amazing open-source community
-- All contributors who help improve this project
-
----
-
-## 📞 Support
-
-For support, email support@powerxcrm.com or open an issue in the GitHub repository.
-
----
-
-## 🗺️ Roadmap
-
-- [ ] Advanced analytics with charts and graphs
-- [ ] Email template customization
-- [ ] Bulk operations (import/export CSV)
-- [ ] Mobile app (React Native)
-- [ ] Integration with third-party services (Google Calendar, Slack)
-- [ ] Advanced reporting and forecasting
-- [ ] Dark mode
-- [ ] Multi-language support
-
----
-
-<div align="center">
-
-**Made with ❤️ by the PowerX Team**
-
-⭐ Star this repo if you found it helpful!
-
-</div>
