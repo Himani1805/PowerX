@@ -8,7 +8,6 @@ import {
   Tooltip,
   ResponsiveContainer,
   PieChart,
-  PieChart,
   Pie,
   Cell,
   Legend
@@ -16,7 +15,7 @@ import {
 import { useGetLeadStatusStatsQuery, useGetLeadOwnerStatsQuery } from '../features/analytics/analyticsApiSlice';
 import { BarChart2, PieChart as PieChartIcon, RefreshCw, Loader2, TrendingUp } from 'lucide-react';
 
-// Color palette for charts
+// Color palette for charts - expanded for more variety
 const COLORS = [
   '#6366f1', // Indigo
   '#8b5cf6', // Purple
@@ -29,15 +28,6 @@ const COLORS = [
   '#84cc16', // Lime
   '#a855f7', // Violet
 ];
-
-// Specific Colors for Statuses
-const STATUS_COLORS = {
-  NEW: '#3b82f6',       // Blue (Fresh)
-  CONTACTED: '#8b5cf6', // Purple (Active)
-  QUALIFIED: '#f59e0b', // Amber (Promising)
-  WON: '#10b981',       // Emerald (Success)
-  LOST: '#ef4444',      // Red (Failure)
-};
 
 const AnalyticsPage = () => {
   // Fetch analytics data from API
@@ -178,16 +168,16 @@ const AnalyticsPage = () => {
                 <Bar
                   dataKey="count"
                   name="Leads"
+                  fill="url(#colorGradient)"
                   radius={[8, 8, 0, 0]}
                   barSize={50}
-                >
-                  {statsByStatus.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={STATUS_COLORS[entry.status] || '#94a3b8'}
-                    />
-                  ))}
-                </Bar>
+                />
+                <defs>
+                  <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#6366f1" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#8b5cf6" stopOpacity={1} />
+                  </linearGradient>
+                </defs>
               </BarChart>
             </ResponsiveContainer>
           </div>
