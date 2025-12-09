@@ -1,0 +1,123 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// 1. Datasource Configuration
+// डेटाबेस कनेक्शन सेट अप करें
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 2. Generator Configuration
+// Prisma Client जनरेट करने के लिए सेट करें
+generator client {
+  provider = "prisma-client-js"
+}
+
+// --- Enums ---
+
+// 1. Role Enum (रोल मैनेजमेंट के लिए)
+enum Role {
+  ADMIN
+  MANAGER
+  SALES_EXECUTIVE
+}
+
+// 2. ActivityType Enum (एक्टिविटी टाइमलाइन के लिए)
+enum ActivityType {
+  NOTE
+  CALL
+  MEETING
+  STATUS_CHANGE
+  EMAIL
+}
+
+// 3. LeadStatus Enum (लीड स्टेटस ट्रैकिंग के लिए)
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  LOST
+  WON
+}
+
+// --- Models ---
+
+// 4. User Model (उपयोगकर्ता और भूमिकाओं के लिए)
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String   // Bcrypt hash stored here
+  name      String
+  role      Role     @default(SALES_EXECUTIVE)
+
+  // Relationships
+  ownedLeads  Lead[]     @relation("OwnerLeads")
+  activities  Activity[]
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Password Reset
+  resetPasswordToken   String?
+  resetPasswordExpires DateTime?
+  
+  // Table Mapping: डेटाबेस टेबल का नाम 'users' पर सेट करें
+  @@map("users")
+}
+
+// 5. Lead Model (लीड मैनेजमेंट के लिए)
+model Lead {
+  id           Int        @id @default(autoincrement())
+  firstName    String
+  lastName     String
+  email        String     @unique
+  phone        String?
+  organization String?
+  status       LeadStatus @default(NEW)
+
+  // Foreign Key for Ownership
+  ownerId      Int
+
+  // Relationships
+  // A Lead is owned by one User (Sales Executive/Manager)
+  owner        User       @relation("OwnerLeads", fields: [ownerId], references: [id])
+  activities   Activity[]
+
+  // Timestamps
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  // Indexing ownerId for faster lookups
+  @@index([ownerId])
+  
+  // Table Mapping: डेटाबेस टेबल का नाम 'leads' पर सेट करें
+  @@map("leads")
+}
+
+// 6. Activity Model (गतिविधि लॉग और टाइमलाइन के लिए)
+model Activity {
+  id        Int          @id @default(autoincrement())
+  type      ActivityType
+  content   String       // Detailed note, call summary, or status change log
+  
+  // Foreign Keys
+  leadId    Int
+  userId    Int          // User who performed the activity
+
+  // Relationships
+  // Activity belongs to one Lead
+  lead      Lead         @relation(fields: [leadId], references: [id])
+  // Activity is created by one User
+  user      User         @relation(fields: [userId], references: [id])
+
+  // Timestamps
+  createdAt DateTime @default(now())
+
+  // Indexing leadId for fast timeline retrieval
+  @@index([leadId])
+  
+  // Table Mapping: डेटाबेस टेबल का नाम 'activities' पर सेट करें
+  @@map("activities")
+}
