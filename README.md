@@ -159,7 +159,7 @@ cd PowerX
 
 ```bash
 # Navigate to backend directory
-cd crm-backend
+cd backend
 
 # Install dependencies
 npm install
@@ -216,7 +216,7 @@ Server will run on `http://localhost:8000`
 
 ```bash
 # Navigate to frontend directory (from project root)
-cd crm-frontend
+cd frontend
 
 # Install dependencies
 npm install
