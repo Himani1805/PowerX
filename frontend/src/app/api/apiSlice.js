@@ -23,7 +23,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const apiSlice = createApi({
   reducerPath: "api", // This will be used as key in store.js
   baseQuery: fetchBaseQuery({
-    baseUrl: "/api/v1", // Your Backend URL
+    baseUrl: "https://powerx-v3pk.onrender.com/api/v1", // Your Backend URL
     prepareHeaders: (headers, { getState }) => {
       // Get token from Redux state
       const token = getState().auth.token;

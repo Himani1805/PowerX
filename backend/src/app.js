@@ -16,10 +16,10 @@ const app = express();
 // Helmet: sets security-related HTTP headers
 app.use(helmet());
 
-// CORS: allow requests from all domains (for development)
-// In production, restrict 'origin' to your frontend URL.
+// CORS: allow requests from frontend
+// Configured for production with Vercel frontend
 app.use(cors({
-  origin: '*', // allow all origins (development only)
+  origin: ['https://power-x-pink.vercel.app', 'http://localhost:5173'], // production and development
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 }));
