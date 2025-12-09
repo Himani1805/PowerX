@@ -18,7 +18,8 @@
 
 **Live Demo:**
 ```
-URL: https://powerx-crm.vercel.app
+Frontend: https://power-x-pink.vercel.app
+Backend API: https://powerx-v3pk.onrender.com
 ```
 
 ---
@@ -248,33 +249,36 @@ Open your browser and navigate to:
 ## 📁 Project Structure
 
 ```
-powerx-crm/
-├── crm-backend/                 # Backend API
+PowerX/
+├── backend/                    # Backend API
 │   ├── prisma/
-│   │   └── schema.prisma       # Database schema
+│   │   ├── migrations/        # Database migrations
+│   │   └── schema.prisma      # Database schema
 │   ├── src/
-│   │   ├── controllers/        # Route controllers
-│   │   ├── middleware/         # Auth, RBAC, Error handling
-│   │   ├── routes/            # API routes
-│   │   ├── services/          # Business logic (Email, etc.)
-│   │   ├── utils/             # Utilities (Prisma, AppError)
-│   │   ├── app.js             # Express application
-│   │   └── index.js           # Server entry point
-│   ├── .env                   # Environment variables
+│   │   ├── controllers/       # Route controllers
+│   │   ├── middleware/        # Auth, RBAC, Error handling
+│   │   ├── routes/           # API routes
+│   │   ├── services/         # Business logic (Email, etc.)
+│   │   ├── utils/            # Utilities (Prisma, AppError)
+│   │   ├── app.js            # Express application
+│   │   └── index.js          # Server entry point
+│   ├── .env                  # Environment variables (not in git)
+│   ├── .env.example          # Environment template
 │   └── package.json
 │
-├── crm-frontend/               # React Frontend
+├── frontend/                  # React Frontend
 │   ├── src/
-│   │   ├── app/               # Redux store setup
-│   │   ├── components/        # Reusable components
-│   │   ├── features/          # Redux slices & API
-│   │   ├── pages/             # Page components
-│   │   ├── App.jsx            # Main app component
-│   │   └── main.jsx           # Entry point
-│   ├── .env                   # Environment variables
+│   │   ├── app/              # Redux store setup
+│   │   ├── components/       # Reusable components
+│   │   ├── features/         # Redux slices & API
+│   │   ├── pages/            # Page components
+│   │   ├── App.jsx           # Main app component
+│   │   └── main.jsx          # Entry point
+│   ├── .env                  # Environment variables (not in git)
+│   ├── .env.example          # Environment template
+│   ├── vercel.json           # Vercel configuration
 │   └── package.json
 │
-├── REQUIREMENTS_CHECKLIST.md  # Implementation checklist
 └── README.md                  # This file
 ```
 
@@ -438,22 +442,9 @@ Authorization: Bearer <token>
 
 ### Backend Tests
 ```bash
-cd crm-backend
+cd backend
 npm test
 ```
-
-### Verification Scripts
-```bash
-# Run comprehensive verification
-node verify_deep.js
-
-# Test search functionality
-node verify_search.js
-
-# Test manager permissions
-node verify_manager.js
-```
-
 ---
 
 ## 🚀 Deployment
@@ -478,7 +469,7 @@ node verify_manager.js
 1. Click **New** → **Web Service**
 2. Connect your GitHub repository
 3. Configure:
-   - **Name**: `powerx-crm-backend`
+   - **Name**: `powerx-backend` (or any name you prefer)
    - **Region**: Same as database
    - **Branch**: `master` or `main`
    - **Root Directory**: `backend`
@@ -506,12 +497,12 @@ EMAIL_PASS=your-app-password
   - Install dependencies
   - Run Prisma migrations (`npm run build`)
   - Start the server
-- Your backend will be live at: `https://powerx-crm-backend.onrender.com`
+- Your backend will be live at: `https://your-service-name.onrender.com`
 
 #### 6. Verify Deployment
 Test your API:
 ```bash
-curl https://powerx-crm-backend.onrender.com/
+curl https://your-service-name.onrender.com/
 ```
 
 ### Frontend Deployment (Vercel)
@@ -534,7 +525,7 @@ npm i -g vercel
 #### 3. Set Environment Variables
 In **Settings** → **Environment Variables**, add:
 ```bash
-VITE_API_URL=https://powerx-crm-backend.onrender.com/api/v1
+VITE_API_URL=https://your-backend-url.onrender.com/api/v1
 ```
 Select all environments: Production, Preview, Development
 
@@ -579,3 +570,75 @@ vercel --prod
 
 ---
 
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+### How to Contribute
+
+1. **Fork the repository**
+2. **Create a feature branch**
+   ```bash
+   git checkout -b feature/AmazingFeature
+   ```
+3. **Commit your changes**
+   ```bash
+   git commit -m 'Add some AmazingFeature'
+   ```
+4. **Push to the branch**
+   ```bash
+   git push origin feature/AmazingFeature
+   ```
+5. **Open a Pull Request**
+
+### Development Guidelines
+
+- Follow the existing code style
+- Write meaningful commit messages
+- Add tests for new features
+- Update documentation as needed
+- Ensure all tests pass before submitting PR
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 👤 Author
+
+**Himani Sharma**
+
+- GitHub: [@Himani1805](https://github.com/Himani1805)
+- Project Link: [https://github.com/Himani1805/PowerX](https://github.com/Himani1805/PowerX)
+
+---
+
+## 🙏 Acknowledgments
+
+- Built with modern web technologies
+- Inspired by enterprise CRM solutions
+- Thanks to the open-source community
+
+---
+
+## 📞 Support
+
+If you have any questions or need help, please:
+
+1. Check the [API Documentation](#-api-documentation)
+2. Review the [Installation Guide](#-installation)
+3. Open an issue on GitHub
+4. Contact via email: hinusharma18@gmail.com
+
+---
+
+<div align="center">
+
+**Made with ❤️ by Himani Sharma**
+
+⭐ Star this repo if you find it helpful!
+
+</div>
