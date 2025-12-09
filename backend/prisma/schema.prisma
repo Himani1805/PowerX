@@ -2,7 +2,6 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 // 1. Datasource Configuration
-// डेटाबेस कनेक्शन सेट अप करें
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
