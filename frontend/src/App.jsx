@@ -4,21 +4,8 @@ import { io } from 'socket.io-client';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// Pages & Components
-// import LoginPage from './pages/LoginPage.jsx';
-// import RegisterPage from './pages/RegisterPage.jsx';
-// import DashboardPage from './pages/DashboardPage.jsx';
-// import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx';
-// import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
-// import LeadsPage from './pages/LeadsPage.jsx';
-// import ActivitiesPage from './pages/ActivitiesPage.jsx';
-// import AnalyticsPage from './pages/AnalyticsPage.jsx';
-// import SettingsPage from './pages/SettingsPage.jsx';
-// import CreateLeadPage from './pages/CreateLeadPage.jsx';
-// import ViewLeadPage from './pages/ViewLeadPage.jsx';
-// import EditLeadPage from './pages/EditLeadPage.jsx';
-// import ProtectedRoute from './components/ProtectedRoute.jsx';
-// import Layout from './components/Layout.jsx';
+import Layout from './components/Layout.jsx';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
 
 // Lazy Load Pages to reduce initial bundle size
 const LoginPage = lazy(() => import('./pages/LoginPage.jsx'));
@@ -36,27 +23,23 @@ const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage.jsx'));
 
 // Simple Loading Spinner
 const FullScreenLoader = () => (
-  <div className="flex h-screen items-center justify-center bg-gray-50">
+  <div className="flex h-screen items-center justify-center bg-slate-50">
     <div className="h-12 w-12 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent"></div>
   </div>
 );
 
 function App() {
-
-  // For Socket and event 
   useEffect(() => {
-    // Connect with backend
-    const socket = io('http://localhost:8000');
+    // Optimization: Use env var for socket URL if available
+    const socketUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+    const socket = io(socketUrl);
 
     socket.on('connect', () => {
       console.log('🔌 Connected to WebSocket Server');
     });
 
-    // lead_activity_update
     socket.on('lead_activity_update', (data) => {
       console.log('New Notification:', data);
-
-      // Show the Toast Notfication
       if (data?.notification) {
         toast.info(data.notification, {
           position: "top-right",
@@ -65,13 +48,11 @@ function App() {
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
-          progress: undefined,
           theme: "light",
         });
       }
     });
 
-    // Cleanup
     return () => {
       socket.disconnect();
     };
@@ -79,52 +60,46 @@ function App() {
 
   return (
     <BrowserRouter>
-      {/* ToastContainer to add on app*/}
       <ToastContainer />
+      <Suspense fallback={<FullScreenLoader />}>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
-      <Routes>
-        {/* Public Routes - No Layout */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+          {/* Protected Routes Wrapper */}
+          <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'SALES_EXECUTIVE']} />}>
 
-        {/* Protected Routes - Wrapped in Layout */}
-        <Route
-          element={<ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'SALES_EXECUTIVE']} />}
-        >
-          {/* Dashboard */}
-          <Route path="/dashboard" element={<Layout><DashboardPage /></Layout>} />
+            {/* Layout Wrapper for Application Pages */}
+            {/* This wrapper ensures Layout is rendered for all child routes */}
+            <Route element={<Layout><Outlet /></Layout>}>
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
 
-          {/* Leads Management */}
-          <Route path="/leads" element={<Layout><LeadsPage /></Layout>} />
-          <Route path="/leads/new" element={<Layout><CreateLeadPage /></Layout>} />
-          <Route path="/leads/:id" element={<Layout><ViewLeadPage /></Layout>} />
-          <Route path="/leads/:id/edit" element={<Layout><EditLeadPage /></Layout>} />
-          <Route path="/leads/:id/activities" element={<Layout><ActivitiesPage /></Layout>} />
+              <Route path="/leads" element={<LeadsPage />} />
+              <Route path="/leads/new" element={<CreateLeadPage />} />
+              <Route path="/leads/:id" element={<ViewLeadPage />} />
+              <Route path="/leads/:id/edit" element={<EditLeadPage />} />
+              <Route path="/leads/:id/activities" element={<ActivitiesPage />} />
 
-          {/* Activities */}
-          <Route path="/activities" element={<Layout><ActivitiesPage /></Layout>} />
+              <Route path="/activities" element={<ActivitiesPage />} />
+              <Route path="/analytics" element={<AnalyticsPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+            </Route>
+          </Route>
 
-          {/* Analytics (Protected for Admin/Manager in Sidebar, but route accessible) */}
-          <Route path="/analytics" element={<Layout><AnalyticsPage /></Layout>} />
-
-          {/* Settings */}
-          <Route path="/settings" element={<Layout><SettingsPage /></Layout>} />
-
-          {/* Default Redirect */}
-          <Route path="/" element={<Layout><DashboardPage /></Layout>} />
-        </Route>
-
-        {/* 404 Page */}
-        <Route path="*" element={
-          <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 text-slate-800">
-            <h1 className="text-6xl font-bold text-indigo-600">404</h1>
-            <p className="text-xl mt-4">Page Not Found</p>
-            <a href="/" className="mt-4 text-indigo-600 hover:underline">Go Home</a>
-          </div>
-        } />
-      </Routes>
+          {/* 404 Route */}
+          <Route path="*" element={
+            <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 text-slate-800">
+              <h1 className="text-6xl font-bold text-indigo-600">404</h1>
+              <p className="text-xl mt-4">Page Not Found</p>
+              <a href="/" className="mt-4 text-indigo-600 hover:underline">Go Home</a>
+            </div>
+          } />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 }

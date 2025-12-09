@@ -557,17 +557,14 @@ export const deleteLead = async (req, res, next) => {
     try {
         const id = parseInt(req.params.id);
 
+        // Check if lead exists (optional, Prisma throws P2025 if not found, but good for explicit 404)
         const lead = await prisma.lead.findUnique({ where: { id } });
         if (!lead) {
             return next(new AppError('Lead not found.', 404));
         }
 
-        // Manually delete related activities first (since Cascade is not set in schema)
-        await prisma.activity.deleteMany({
-            where: { leadId: id },
-        });
-
         // Delete the lead
+        // Note: Related activities are automatically deleted due to onDelete: Cascade in schema
         await prisma.lead.delete({
             where: { id },
         });
