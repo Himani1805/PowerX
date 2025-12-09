@@ -92,7 +92,11 @@ export const leadsApiSlice = apiSlice.injectEndpoints({
         url: `/leads/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: [{ type: 'Leads', id: 'LIST' }],
+      // ✅ FIX: Invalidate both the specific item AND the list
+      invalidatesTags: (result, error, id) => [
+        { type: 'Leads', id }, 
+        { type: 'Leads', id: 'LIST' }
+      ],
     }),
   }),
 });
