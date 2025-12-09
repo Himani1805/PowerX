@@ -15,6 +15,14 @@ const app = express();
 
 // --- Security and Logging Middleware ---
 
+// CORS: allow requests from frontend - MUST BE FIRST
+app.use(cors({
+  origin: ['https://power-x-pink.vercel.app', 'http://localhost:5173'],
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 200
+}));
+
 // Helmet: sets security-related HTTP headers
 app.use(helmet());
 
@@ -25,14 +33,6 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.'
 });
 app.use('/api', limiter);
-
-// CORS: allow requests from frontend
-// Configured for production with Vercel frontend
-app.use(cors({
-  origin: ['https://power-x-pink.vercel.app', 'http://localhost:5173'], // production and development
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
-}));
 
 // Performance & Logging
 app.use(compression());
