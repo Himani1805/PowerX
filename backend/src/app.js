@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import compression from 'compression';
+import rateLimit from 'express-rate-limit';
 import authRoutes from './routes/auth.routes.js';
 import leadRoutes from './routes/lead.routes.js';
 import activityRoutes from './routes/activity.routes.js';
@@ -16,6 +18,14 @@ const app = express();
 // Helmet: sets security-related HTTP headers
 app.use(helmet());
 
+// Rate Limiting (100 requests per 15 mins)
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, 
+  max: 100, 
+  message: 'Too many requests from this IP, please try again later.'
+});
+app.use('/api', limiter);
+
 // CORS: allow requests from frontend
 // Configured for production with Vercel frontend
 app.use(cors({
@@ -24,7 +34,8 @@ app.use(cors({
   credentials: true,
 }));
 
-// Morgan: HTTP request logging (development mode)
+// Performance & Logging
+app.use(compression());
 app.use(morgan('dev'));
 
 
@@ -40,7 +51,8 @@ app.use(express.urlencoded({ extended: true }));
 // --- Health Check Route ---
 app.get('/', (req, res) => {
   res.status(200).json({
-    message: 'CRM API is running!',
+    message: 'PowerX CRM API is running!',
+    version: '1.0.0',
     status: 'OK',
     timestamp: new Date().toISOString(),
   });

@@ -106,7 +106,7 @@ model Activity {
 
   // Relationships
   // Activity belongs to one Lead
-  lead Lead @relation(fields: [leadId], references: [id])
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
   // Activity is created by one User
   user User @relation(fields: [userId], references: [id])
 
@@ -114,7 +114,7 @@ model Activity {
   createdAt DateTime @default(now())
 
   // Indexing leadId for fast timeline retrieval
-  @@index([leadId])
+  @@index([leadId, createdAt(sort: Desc)])
   // Table Mapping: Set database table name to 'activities'
   @@map("activities")
 }
