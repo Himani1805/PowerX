@@ -458,39 +458,100 @@ node verify_manager.js
 
 ## 🚀 Deployment
 
-### Backend Deployment (Heroku Example)
+### Backend Deployment (Render)
 
+#### 1. Create a Render Account
+- Go to [Render](https://render.com) and sign up
+
+#### 2. Create a PostgreSQL Database
+1. Click **New** → **PostgreSQL**
+2. Configure:
+   - **Name**: `powerx-crm-db`
+   - **Database**: `powerx_crm`
+   - **User**: (auto-generated)
+   - **Region**: Choose closest to your users
+   - **Plan**: Free or Starter
+3. Click **Create Database**
+4. Copy the **Internal Database URL** (starts with `postgresql://`)
+
+#### 3. Create a Web Service
+1. Click **New** → **Web Service**
+2. Connect your GitHub repository
+3. Configure:
+   - **Name**: `powerx-crm-backend`
+   - **Region**: Same as database
+   - **Branch**: `master` or `main`
+   - **Root Directory**: `backend`
+   - **Runtime**: `Node`
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm start`
+   - **Plan**: Free or Starter
+
+#### 4. Set Environment Variables
+In the **Environment** section, add:
 ```bash
-# Login to Heroku
-heroku login
-
-# Create app
-heroku create powerx-crm-backend
-
-# Add PostgreSQL addon
-heroku addons:create heroku-postgresql:hobby-dev
-
-# Set environment variables
-heroku config:set JWT_SECRET=your-secret-key
-heroku config:set NODE_ENV=production
-
-# Deploy
-git push heroku main
-
-# Run migrations
-heroku run npx prisma migrate deploy
+DATABASE_URL=<paste-your-internal-database-url>
+JWT_SECRET=<your-secure-random-string>
+NODE_ENV=production
+FRONTEND_URL=https://your-frontend-url.vercel.app
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-app-password
 ```
 
-### Frontend Deployment (Vercel Example)
+#### 5. Deploy
+- Click **Create Web Service**
+- Render will automatically:
+  - Install dependencies
+  - Run Prisma migrations (`npm run build`)
+  - Start the server
+- Your backend will be live at: `https://powerx-crm-backend.onrender.com`
 
+#### 6. Verify Deployment
+Test your API:
 ```bash
-# Install Vercel CLI
-npm i -g vercel
+curl https://powerx-crm-backend.onrender.com/
+```
 
-# Deploy
-cd crm-frontend
+### Frontend Deployment (Vercel)
+
+#### 1. Install Vercel CLI (Optional)
+```bash
+npm i -g vercel
+```
+
+#### 2. Deploy via Vercel Dashboard (Recommended)
+1. Go to [Vercel](https://vercel.com) and sign up
+2. Click **Add New** → **Project**
+3. Import your GitHub repository
+4. Configure:
+   - **Framework Preset**: Vite
+   - **Root Directory**: `frontend`
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+
+#### 3. Set Environment Variables
+In **Settings** → **Environment Variables**, add:
+```bash
+VITE_API_URL=https://powerx-crm-backend.onrender.com/api/v1
+```
+Select all environments: Production, Preview, Development
+
+#### 4. Deploy
+- Click **Deploy**
+- Your frontend will be live at: `https://your-project.vercel.app`
+
+#### 5. Redeploy (if needed)
+After adding environment variables, go to **Deployments** → Click **...** → **Redeploy**
+
+### Alternative: Deploy via CLI
+```bash
+# Deploy frontend
+cd frontend
 vercel --prod
 ```
+
 
 ---
 
