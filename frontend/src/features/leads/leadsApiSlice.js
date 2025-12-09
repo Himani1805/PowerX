@@ -16,17 +16,17 @@ export const leadsApiSlice = apiSlice.injectEndpoints({
           const leads = result.data.leads || result.data;
           if (Array.isArray(leads)) {
             return [
-              ...leads.map(({ id }) => ({ type: 'Lead', id })),
-              { type: 'Lead', id: 'LIST' },
+              ...leads.map(({ id }) => ({ type: 'Leads', id })),
+              { type: 'Leads', id: 'LIST' },
             ];
           }
         }
-        return [{ type: 'Lead', id: 'LIST' }];
+        return [{ type: 'Leads', id: 'LIST' }];
       },
     }),
     getDashboardStatus: builder.query({
         query: () => '/dashboard/status',
-        providesTags: ['Lead'], // Invalidate when leads change
+        providesTags: ['Leads'], // Invalidate when leads change
     }),
 
     // 'getLeadById' query endpoint
