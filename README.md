@@ -16,8 +16,7 @@
 
 ---
 
-## 🌐 Live Demo
-
+**Live Demo:**
 - **Frontend:** [https://power-x-pink.vercel.app](https://power-x-pink.vercel.app)
 - **Backend API:** [https://powerx-v3pk.onrender.com](https://powerx-v3pk.onrender.com)
 
@@ -567,4 +566,19 @@ vercel --prod
 |----------|-------------|----------|---------|
 | `VITE_API_URL` | Backend API URL | Yes | http://localhost:8000/api/v1 |
 
+---
 
+## 👤 Author
+
+**Himani Sharma**
+
+- GitHub: [@Himani1805](https://github.com/Himani1805)
+- Email: hinusharma18@gmail.com
+
+---
+
+<div align="center">
+
+**⭐ Star this repo if you find it helpful!**
+
+</div>
