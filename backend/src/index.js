@@ -19,8 +19,12 @@ const server = http.createServer(app);
 // Initialize Socket.io and attach it to the server
 const io = new Server(server, {
   cors: {
-    origin: "*", // Allows connection from any client origin
+    origin: [
+       "http://localhost:5173", 
+       "https://power-x-pink.vercel.app"
+    ], // Allows connection from any client origin
     methods: ["GET", "POST"],
+    credentials: true
   },
 });
 
